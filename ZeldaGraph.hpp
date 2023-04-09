@@ -50,7 +50,7 @@ class GameGraph {
     // for all possible moves:
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
-    vector<GameState*> GenerateNeighbors(GameState* CurrentState);
+    vector<GameState*> GenerateNeighbors(GameState* currentState);
   
     /**
      * Takes in the unique identifier of a state and creates it
