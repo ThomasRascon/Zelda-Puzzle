@@ -25,42 +25,30 @@ struct GameState {
 
 
 // all gamestates 
-class GameMap {
+class GameGraph {
+  private:
+  
+    map<int, GameState> gameMap;
+    vector<int> configuration // board configuration
+    // dimensions of configuration
+    int length
+    int width 
+      
   public:
     
     // Recursively find path from initial to final states
     // FinalState has arbitrary wolf position
-    vector<int> FindPath(GameState InitialState, GameState FinalState, ) {
-    
-
-
-    }
+    vector<int> FindPath(GameState InitialState, GameState FinalState);
 
     // work from initial state
     // iterate through 4 possible directions, asking ValidMove if each direction is possible
     // for all possible moves:
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
-    vector<GameState> GenerateNeighbors(GameState CurrentState) {
-
-    }
-
-
+    vector<GameState> GenerateNeighbors(GameState CurrentState);
 
     // uses configuration, which is a global variable and game rules to return whether
     // you can go from CurrentState to direction up, down, left, or right, specified 
     // by u, d, l, r
-    bool ValidMove(GameState CurrentState, char move) {
-
-    }
-  
-  private:
-
-    map<int, GameState> gameMap;
-
-    vector<int> configuration // board configuration
-    
-    // dimensions of configuration
-    int length
-    int width 
+    bool ValidMove(GameState CurrentState, char move);
 }
