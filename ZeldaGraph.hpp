@@ -12,8 +12,8 @@ struct GameState {
   bool connected; // whether or not connected to initial state
   bool winningPath; // whether connected intial and final state
   bool hasBeenVisited;
-  vector<char> validMoves; // all possible movements from current state
-  vector<GameState> neighboors; // possible neighbors, corresponds to validMoves
+  vector<bool> validMoves; // all possible movements from current state (order: Up, Down, Left, Right)
+  vector<GameState*> neighboors; // possible neighbors, corresponds to validMoves (nullptr if invalid)
   vector<int> winningNeighbors; // which neighbors have a path to final state, index of neighbors 
   GameState(int p1, int p2, int wolf) {
     this.p1 = p1;
@@ -50,7 +50,7 @@ class GameGraph {
     // for all possible moves:
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
-    vector<GameState> GenerateNeighbors(GameState* CurrentState);
+    vector<GameState*> GenerateNeighbors(GameState* CurrentState);
   
     /**
      * Takes in the unique identifier of a state and creates it
