@@ -14,7 +14,6 @@ struct GameState {
   bool hasBeenVisited;
   vector<bool> moves; // all possible movements from current state (order: Up, Down, Left, Right)
   vector<GameState*> neighboors; // possible neighbors, corresponds to validMoves (nullptr if invalid)
-  vector<int> winningNeighbors; // which neighbors have a path to final state, index of neighbors 
   GameState(int p1, int p2, int wolf) {
     this.p1 = p1;
     this.p2 = p2;
@@ -30,7 +29,7 @@ class GameGraph {
     // dimensions of configuration
     int length
     int width
-    vector<int> configuration // board configuration
+    vector<vecotr<int>> configuration // board configuration
     GameState* initalState;
     map<int, GameState*> gameMap;
       
