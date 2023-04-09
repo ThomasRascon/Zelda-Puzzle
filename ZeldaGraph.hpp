@@ -60,5 +60,5 @@ class GameGraph {
     // uses configuration, which is a global variable and game rules to return whether
     // you can go from CurrentState to direction up, down, left, or right, specified 
     // by u, d, l, r
-    bool validMove(GameState* CurrentState, char move);
+    bool validMove(GameState* currentState, char move);
 }
