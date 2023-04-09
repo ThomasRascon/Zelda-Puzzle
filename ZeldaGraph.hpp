@@ -12,7 +12,7 @@ struct GameState {
   bool connected; // whether or not connected to initial state
   bool winningPath; // whether connected intial and final state
   bool hasBeenVisited;
-  vector<bool> validMoves; // all possible movements from current state (order: Up, Down, Left, Right)
+  vector<bool> moves; // all possible movements from current state (order: Up, Down, Left, Right)
   vector<GameState*> neighboors; // possible neighbors, corresponds to validMoves (nullptr if invalid)
   vector<int> winningNeighbors; // which neighbors have a path to final state, index of neighbors 
   GameState(int p1, int p2, int wolf) {
@@ -60,5 +60,5 @@ class GameGraph {
     // uses configuration, which is a global variable and game rules to return whether
     // you can go from CurrentState to direction up, down, left, or right, specified 
     // by u, d, l, r
-    bool ValidMove(GameState* CurrentState, char move);
+    bool validMove(GameState* CurrentState, char move);
 }
