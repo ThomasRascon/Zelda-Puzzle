@@ -15,8 +15,8 @@ GameGraph::createState(int identifier) {
       int newP1 = (identifier/100) % 100; //middle 2 digits
       int newP2 = identifier % 100;       //last 2 digits
       
-      GameState* newState = GameState(newP1, newP2, newWolf);    //call to GameState constructor
-}
+      return newState = GameState(newP1, newP2, newWolf);    //call to GameState constructor
+}//EOF createState method
 
 GameGraph::validMove(GameState* currentState, char move) {
   int wolf_x = wolf%width;
