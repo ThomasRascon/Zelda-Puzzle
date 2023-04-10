@@ -12,6 +12,7 @@ GameGraph::GameGraph(int length, int width, vector<int> configuration, int inita
       this.initalState = createState(initalIdentifier);
 }//EOF GameGraph constructor
 
+
 vector<GameState*> generateNeighbors(GameState* currentState) {
       currentState->visited = true;
       //loops through each possible move (Up, Down, Left, Right)
@@ -33,7 +34,8 @@ vector<GameState*> generateNeighbors(GameState* currentState) {
               currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
       }//EOF for loop
 }//EOF generateNeighbors method
-                  
+
+      
 GameGraph::generateID(GameState* currentState, char move) {
     int newWolf = currentState->wolf;
     int newP1 = currentState->p1;
@@ -99,15 +101,7 @@ GameGraph::generateID(GameState* currentState, char move) {
     return 10000*newWolf + 100*newP2 + newP1;    //call to GameState constructor
 }//EOF generateID method
 
-GameGraph::createNeighbor(int ID) {
-    newWolf = ID/10000;      //will give the first two digits
-    newP1 = (ID/100) % 100;  //will give the middle two digits
-    newP2 = ID % 100;        //will give the last two digits
-
-    GameState* newState = GameState(newP1, newP2, newWolf);  //creates new state
-    return newState
-}//EOF createNeighbor method
-
+      
 GameGraph::validMove(GameState* currentState, char move) {
   int wolf_x = currentState->wolf%width;
   int wolf_y = currentState->wolf/width;
@@ -184,3 +178,13 @@ GameGraph::validMove(GameState* currentState, char move) {
   return true;
   
 }//EOF validMove method
+
+      
+GameGraph::createNeighbor(int ID) {
+    newWolf = ID/10000;      //will give the first two digits
+    newP1 = (ID/100) % 100;  //will give the middle two digits
+    newP2 = ID % 100;        //will give the last two digits
+
+    GameState* newState = GameState(newP1, newP2, newWolf);  //creates new state
+    return newState
+}//EOF createNeighbor method
