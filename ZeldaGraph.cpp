@@ -36,72 +36,6 @@ vector<GameState*> generateNeighbors(GameState* currentState) {
 }//EOF generateNeighbors method
 
       
-GameGraph::generateID(GameState* currentState, char move) {
-    int newWolf = currentState->wolf;
-    int newP1 = currentState->p1;
-    int newP2 = currentState->p2;
-    
-    int wolf_x = currentState->wolf%width;
-    int wolf_y = currentState->wolf/width;
-    int p1_x = currentState->p1%width;
-    int p1_y = currentState->p1/width;
-    int p2_x = currentState->p2%width;
-    int p2_y = currentState->p2/width;
-    
-    if(move=='U'){
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_y-1 => 0 && configuration[p1_y-1][p1_x] != 0){
-            newP1 = newP1 - width;  //Moves piece 1 up
-        }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_y+1 <= length-1 && configuration[p2_y+1][p2_x] != 0){
-            newP2 = newP2 + width;  //Moves piece 2 down
-        }
-        newWolf = newWolf - width;  //Moves the wolf up
-    }//EOF Up case
-  
-    else if(move=='D'){
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_y+1 <= length-1 && configuration[p1_y+1][p1_x] != 0){
-            newP1 = newP1 - width;  //Moves piece 1 up
-        }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_y-1 >= 0 && configuration[p2_y-1][p2_x] != 0){
-            newP2 = newP2 + width;  //Moves piece 2 up
-        }
-        newWolf = newWolf + width;  //Moves the wolf down
-    }//EOF Down case
-  
-    else if(move=='L'){
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_x-1 >=0 && configuration[p1_y][p1_x-1] != 0){
-            newP1 = newP1 - 1;  //Moves piece 1 left
-        }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_x+1 <= width-1 && configuration[p2_y][p2_x+1] != 0){
-            newP2 = newP2 + 1;  //Moves piece 2 right
-        }
-        newWolf = newWolf - 1;  //Moves the wolf left
-
-    }//EOF Left case
-  
-    else{
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_x+1 <= lenght-1 && configuration[p1_y][p1_x+1] != 0){
-            newP1 = newP1 + 1;  //Moves piece 1 right
-        }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_x-1 >= 0 && configuration[p2_y][p2_x-1] != 0){
-            newP2 = newP2 - 1;  //Moves piece 2 left
-        }
-        newWolf = newWolf + 1;  //Moves the wolf right
-    
-    }//EOF Right case
-
-    return 10000*newWolf + 100*newP2 + newP1;    //call to GameState constructor
-}//EOF generateID method
-
-      
 GameGraph::validMove(GameState* currentState, char move) {
   int wolf_x = currentState->wolf%width;
   int wolf_y = currentState->wolf/width;
@@ -180,7 +114,73 @@ GameGraph::validMove(GameState* currentState, char move) {
 }//EOF validMove method
 
       
-GameGraph::createNeighbor(int ID) {
+GameGraph::generateID(GameState* currentState, char move) {
+    int newWolf = currentState->wolf;
+    int newP1 = currentState->p1;
+    int newP2 = currentState->p2;
+    
+    int wolf_x = currentState->wolf%width;
+    int wolf_y = currentState->wolf/width;
+    int p1_x = currentState->p1%width;
+    int p1_y = currentState->p1/width;
+    int p2_x = currentState->p2%width;
+    int p2_y = currentState->p2/width;
+    
+    if(move=='U'){
+        //Checks if piece 1 is going to move to a valid space
+        if(p1_y-1 => 0 && configuration[p1_y-1][p1_x] != 0){
+            newP1 = newP1 - width;  //Moves piece 1 up
+        }
+        //Checks if piece 2 is going to move to a valid space
+        if(p2_y+1 <= length-1 && configuration[p2_y+1][p2_x] != 0){
+            newP2 = newP2 + width;  //Moves piece 2 down
+        }
+        newWolf = newWolf - width;  //Moves the wolf up
+    }//EOF Up case
+  
+    else if(move=='D'){
+        //Checks if piece 1 is going to move to a valid space
+        if(p1_y+1 <= length-1 && configuration[p1_y+1][p1_x] != 0){
+            newP1 = newP1 - width;  //Moves piece 1 up
+        }
+        //Checks if piece 2 is going to move to a valid space
+        if(p2_y-1 >= 0 && configuration[p2_y-1][p2_x] != 0){
+            newP2 = newP2 + width;  //Moves piece 2 up
+        }
+        newWolf = newWolf + width;  //Moves the wolf down
+    }//EOF Down case
+  
+    else if(move=='L'){
+        //Checks if piece 1 is going to move to a valid space
+        if(p1_x-1 >=0 && configuration[p1_y][p1_x-1] != 0){
+            newP1 = newP1 - 1;  //Moves piece 1 left
+        }
+        //Checks if piece 2 is going to move to a valid space
+        if(p2_x+1 <= width-1 && configuration[p2_y][p2_x+1] != 0){
+            newP2 = newP2 + 1;  //Moves piece 2 right
+        }
+        newWolf = newWolf - 1;  //Moves the wolf left
+
+    }//EOF Left case
+  
+    else{
+        //Checks if piece 1 is going to move to a valid space
+        if(p1_x+1 <= lenght-1 && configuration[p1_y][p1_x+1] != 0){
+            newP1 = newP1 + 1;  //Moves piece 1 right
+        }
+        //Checks if piece 2 is going to move to a valid space
+        if(p2_x-1 >= 0 && configuration[p2_y][p2_x-1] != 0){
+            newP2 = newP2 - 1;  //Moves piece 2 left
+        }
+        newWolf = newWolf + 1;  //Moves the wolf right
+    
+    }//EOF Right case
+
+    return 10000*newWolf + 100*newP2 + newP1;    //call to GameState constructor
+}//EOF generateID method
+      
+      
+GameGraph::createState(int ID) {
     newWolf = ID/10000;      //will give the first two digits
     newP1 = (ID/100) % 100;  //will give the middle two digits
     newP2 = ID % 100;        //will give the last two digits
