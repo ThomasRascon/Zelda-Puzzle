@@ -10,8 +10,7 @@ struct GameState {
   int p2;
   int wolf;
   bool connected; // whether or not connected to initial state
-  bool winningPath; // whether connected intial and final state
-  bool hasBeenVisited;
+  bool visited;
   vector<bool> moves; // all possible movements from current state (order: Up, Down, Left, Right)
   vector<GameState*> neighboors; // possible neighbors, corresponds to validMoves (nullptr if invalid)
   GameState(int p1, int p2, int wolf) {
@@ -19,7 +18,7 @@ struct GameState {
     this.p2 = p2;
     this.wolf = wolf;
     this.connected = false;
-    this.winningPath = false;
+    this.visted = false;
 };
 
 
@@ -38,11 +37,7 @@ class GameGraph {
     /**
      * GameGraph constructor
      */
-    GameGraph(int length, int width, vector<int> configuration, int initalIdentifier);
-    
-    // Recursively find path from initial to final states
-    // FinalState has arbitrary wolf position
-    vector<int> FindPath(GameState* initialState, GameState* finalState);
+    GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier);
 
     // work from initial state
     // iterate through 4 possible directions, asking ValidMove if each direction is possible
