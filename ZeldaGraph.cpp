@@ -7,16 +7,24 @@ GameGraph::GameGraph(int length, int width, vector<int> configuration, int inita
       this.length = length;
       this.width = width;
       this.configuration = configuration;
-      this.initalState = createState(initalIdentifier); //TODO: IDK if I can call to createState in this file
+      this.initalState = createState(initalIdentifier);
+}
+
+GameGraph::createState(int identifier) {
+      int newWolf = identifier/10000;     //first 2 digits
+      int newP1 = (identifier/100) % 100; //middle 2 digits
+      int newP2 = identifier % 100;       //last 2 digits
+      
+      GameState* newState = GameState(newP1, newP2, newWolf);    //call to GameState constructor
 }
 
 GameGraph::validMove(GameState* currentState, char move) {
-  int wolf_x = wolf%width
-  int wolf_y = wolf/width
-  int p1_x = p1%width
-  int p1_y = p1/width
-  int p2_x = p2%width
-  int p2_y = p2/width
+  int wolf_x = wolf%width;
+  int wolf_y = wolf/width;
+  int p1_x = p1%width;
+  int p1_y = p1/width;
+  int p2_x = p2%width;
+  int p2_y = p2/width;
   
   if(move=='U'){
     
