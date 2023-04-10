@@ -44,15 +44,20 @@ class GameGraph {
     // for all possible moves:
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
-    vector<GameState*> generateNeighbors(GameState* currentState);
+    void generateNeighbors(GameState* currentState);
   
-    /**
-     * Takes in the unique identifier of a state and creates it
-     */
-    GameState* createState(int identifier);
-
     // uses configuration, which is a global variable and game rules to return whether
     // you can go from CurrentState to direction up, down, left, or right, specified 
     // by u, d, l, r
     bool validMove(GameState* currentState, char move);
+  
+    /**
+     * Takes in the current state and the move you wish to make and creates the ID of the next state
+     */
+    int generateID(GameState* currentState, char move);
+  
+    /**
+     * Takes in the unique identifier of a state and creates it
+     */
+    GameState* createState(int ID);
 }
