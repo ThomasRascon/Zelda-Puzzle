@@ -174,7 +174,6 @@ GameState* GameGraph::createState(int ID) {
 
 
 void GameGraph::generateNeighbors(GameState* currentState) {
-      currentState->visited = true;
       //loops through each possible move (Up, Down, Left, Right)
       for(int i = 0; i < 4; ++i){  
           char move = moveTypes[i];
@@ -182,16 +181,20 @@ void GameGraph::generateNeighbors(GameState* currentState) {
           //if the move is valid
           if(validMove(currentState, move)){
               int neighborID = generateID(currentState, move);   //identifier of the neighbor
-                  
-              auto iter = gameMap.find(neighborID);  //search the gameMap for the neighbor
+              auto iter = gameMap.find(neighborID);  			 //search the gameMap for the neighbor
               //if the neighbor is not found (has not been created)...
               if(iter == gameMap.end()){
-                  neighbor = createState(neighborID);    //create neighbor given the neighborID
+                  neighbor = createState(neighborID);    			//create neighbor given the neighborID
                   gameMap.insert(make_pair(neighborID, neighbor));  //add the newly created neighbor to the gameMap
-                  generateNeighbors(neighbor);          //recurrsively call generateNeighbors on the new neighbor
-              }
-          }//EOF if   
-              
+				  bool p1Final = ((neighborID/100)%100==final_1 || (neighborID/100)%100==final_2);	//if p1 is on a final position
+				  bool p2Final = (neighborID%100==final_1 || neighborID%100==final_2);	//if p2 is on a final position
+				  //if p1 and p2 aren't both on final spaces...
+				  if(!(p1Final && p2Final)){
+				      generateNeighbors(neighbor);       //recurrsively call generateNeighbors on the new neighbor
+
+				  }
+			  }
+          }//EOF if
           currentState->moves[i] = true;            //Since the move is valid
           currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
       }//EOF for loop
