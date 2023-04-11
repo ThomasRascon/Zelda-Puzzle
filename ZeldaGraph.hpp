@@ -10,7 +10,6 @@ struct GameState {
   int p2;
   int wolf;
   bool connected; // whether or not connected to initial state
-  bool visited;
   bool moves[4]; // all possible movements from current state (order: Up, Down, Left, Right)
   GameState* neighbors[4]; // possible neighbors, corresponds to validMoves (nullptr if invalid)
   GameState(int p1, int p2, int wolf) {
@@ -18,7 +17,6 @@ struct GameState {
     this->p2 = p2;
     this->wolf = wolf;
     this->connected = false;
-    this->visited = false;
   }
 };
 
