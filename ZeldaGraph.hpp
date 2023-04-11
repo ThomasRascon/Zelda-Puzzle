@@ -12,13 +12,14 @@ struct GameState {
   bool connected; // whether or not connected to initial state
   bool visited;
   bool moves[4]; // all possible movements from current state (order: Up, Down, Left, Right)
-  GameState* neighboors[4]; // possible neighbors, corresponds to validMoves (nullptr if invalid)
+  GameState* neighbors[4]; // possible neighbors, corresponds to validMoves (nullptr if invalid)
   GameState(int p1, int p2, int wolf) {
-    this.p1 = p1;
-    this.p2 = p2;
-    this.wolf = wolf;
-    this.connected = false;
-    this.visted = false;
+    this->p1 = p1;
+    this->p2 = p2;
+    this->wolf = wolf;
+    this->connected = false;
+    this->visited = false;
+  }
 };
 
 
@@ -26,9 +27,9 @@ struct GameState {
 class GameGraph {
   private:
     // dimensions of configuration
-    int length
-    int width
-    vector<vecotr<int>> configuration // board configuration
+    int length;
+    int width;
+    vector<vector<int>> configuration; // board configuration
     GameState* initalState;
     map<int, GameState*> gameMap;
       
@@ -44,6 +45,7 @@ class GameGraph {
     // for all possible moves:
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
+    // NOTE: This seems to also be defined in ZeldaGraph.cpp
     void generateNeighbors(GameState* currentState);
   
     // uses configuration, which is a global variable and game rules to return whether
@@ -60,4 +62,4 @@ class GameGraph {
      * Takes in the unique identifier of a state and creates it
      */
     GameState* createState(int ID);
-}
+};
