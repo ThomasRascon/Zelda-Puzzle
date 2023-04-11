@@ -192,9 +192,7 @@ void GameGraph::generateNeighbors(GameState* currentState) {
               }
           }//EOF if   
               
-              currentState->moves[i] = true;            //Since the move is valid
-              currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
+          currentState->moves[i] = true;            //Since the move is valid
+          currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
       }//EOF for loop
 }//EOF generateNeighbors method
-
-
