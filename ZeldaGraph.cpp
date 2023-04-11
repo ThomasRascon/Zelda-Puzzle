@@ -9,12 +9,15 @@ const char moveTypes[4] = {'U','D','L','R'};
 bool validMove(GameState* currentState, char move);
 int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
+void generateNeighbors(GameState* currentState);
 
-GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier) {
+GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier, int target_1, int target_2) {
       this->length = length;
       this->width = width;
       this->configuration = configuration;
       this->initalState = createState(initalIdentifier);
+      this->target_1 = target_1;
+      this->target_2 = target_2;
 }//EOF GameGraph constructor
 
 
@@ -186,14 +189,14 @@ void GameGraph::generateNeighbors(GameState* currentState) {
               if(iter == gameMap.end()){
                   neighbor = createState(neighborID);    			//create neighbor given the neighborID
                   gameMap.insert(make_pair(neighborID, neighbor));  //add the newly created neighbor to the gameMap
-				  bool p1Final = ((neighborID/100)%100==final_1 || (neighborID/100)%100==final_2);	//if p1 is on a final position
-				  bool p2Final = (neighborID%100==final_1 || neighborID%100==final_2);	//if p2 is on a final position
-				  //if p1 and p2 aren't both on final spaces...
-				  if(!(p1Final && p2Final)){
-				      generateNeighbors(neighbor);       //recurrsively call generateNeighbors on the new neighbor
+		  bool p1Final = ((neighborID/100)%100==target_1 || (neighborID/100)%100==target_2);	//if p1 is on a final position
+		  bool p2Final = (neighborID%100==final_1 || neighborID%100==final_2);	//if p2 is on a final position
+		  //if p1 and p2 aren't both on final spaces...
+		  if(!(p1Final && p2Final)){
+		      generateNeighbors(neighbor);       //recurrsively call generateNeighbors on the new neighbor
 
-				  }
-			  }
+		  }
+	      }//EOF if
           }//EOF if
           currentState->moves[i] = true;            //Since the move is valid
           currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
