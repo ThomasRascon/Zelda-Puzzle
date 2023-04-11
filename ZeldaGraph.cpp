@@ -1,7 +1,3 @@
-// NOTES: 
-// Question on line 27
-// Error at line 200 related t pointers that I'm not sure how to fix
-
 #include "ZeldaGraph.hpp"
 
 using namespace std;
@@ -24,7 +20,6 @@ GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, i
 
 bool GameGraph::validMove(GameState* currentState, char move) {
 
-  // how does this part work?
   int wolf_x = currentState->wolf%width;
   int wolf_y = currentState->wolf/width;
   int p1_x = currentState->p1%width;
