@@ -27,6 +27,9 @@ class GameGraph {
     // dimensions of configuration
     int length;
     int width;
+    //positions are the target spaces
+    int target_1;
+    int target_2;
     vector<vector<int>> configuration; // board configuration
     GameState* initalState;
     map<int, GameState*> gameMap;
