@@ -9,13 +9,11 @@ const char moveTypes[4] = {'U','D','L','R'};
 bool validMove(GameState* currentState, char move);
 int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
-void generateNeighbors(GameState* currentState);
 
-GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier, int target_1, int target_2) {
+GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, pair<int,int> target_1, pair<int,int> target_2) {
       this->length = length;
       this->width = width;
       this->configuration = configuration;
-      this->initalState = createState(initalIdentifier);
       this->target_1 = target_1;
       this->target_2 = target_2;
 }//EOF GameGraph constructor
@@ -23,12 +21,12 @@ GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, i
 
 bool GameGraph::validMove(GameState* currentState, char move) {
 
-  int wolf_x = currentState->wolf%width;
-  int wolf_y = currentState->wolf/width;
-  int p1_x = currentState->p1%width;
-  int p1_y = currentState->p1/width;
-  int p2_x = currentState->p2%width;
-  int p2_y = currentState->p2/width;
+  int wolf_x = currentState->wolf.first;
+  int wolf_y = currentState->wolf.second;
+  int p1_x = currentState->p1.first;
+  int p1_y = currentState->p1.second;
+  int p2_x = currentState->p2.first;
+  int p2_y = currentState->p2.second;
   
   if(move=='U'){
     
@@ -101,68 +99,69 @@ bool GameGraph::validMove(GameState* currentState, char move) {
 
       
 int GameGraph::generateID(GameState* currentState, char move) {
-    int newWolf = currentState->wolf;
-    int newP1 = currentState->p1;
-    int newP2 = currentState->p2;
+    pair<int,int> newWolf = currentState->wolf;
+    pair<int,int> newP1 = currentState->p1;
+    pair<int,int> newP2 = currentState->p2;
     
-    int wolf_x = currentState->wolf%width;
-    int wolf_y = currentState->wolf/width;
-    int p1_x = currentState->p1%width;
-    int p1_y = currentState->p1/width;
-    int p2_x = currentState->p2%width;
-    int p2_y = currentState->p2/width;
+    int wolf_x = currentState->wolf.first;
+    int wolf_y = currentState->wolf.second;
+    int p1_x = currentState->p1.first;
+    int p1_y = currentState->p1.second;
+    int p2_x = currentState->p2.first;
+    int p2_y = currentState->p2.second;
     
     if(move=='U'){
         //Checks if piece 1 is going to move to a valid space
         if(p1_y-1 >= 0 && configuration[p1_y-1][p1_x] != 0){
-            newP1 = newP1 - width;  //Moves piece 1 up
+            --newP1.second;  //Moves piece 1 up
         }
         //Checks if piece 2 is going to move to a valid space
         if(p2_y+1 <= length-1 && configuration[p2_y+1][p2_x] != 0){
-            newP2 = newP2 + width;  //Moves piece 2 down
+            ++newP2.second;  //Moves piece 2 down
         }
-        newWolf = newWolf - width;  //Moves the wolf up
+        --newWolf.second  //Moves the wolf up
     }//EOF Up case
   
     else if(move=='D'){
         //Checks if piece 1 is going to move to a valid space
         if(p1_y+1 <= length-1 && configuration[p1_y+1][p1_x] != 0){
-            newP1 = newP1 - width;  //Moves piece 1 up
+            ++newP1.second;  //Moves piece 1 down
         }
         //Checks if piece 2 is going to move to a valid space
         if(p2_y-1 >= 0 && configuration[p2_y-1][p2_x] != 0){
-            newP2 = newP2 + width;  //Moves piece 2 up
+            --newP2.second;  //Moves piece 2 up
         }
-        newWolf = newWolf + width;  //Moves the wolf down
+        ++newWolf.second;  //Moves the wolf down
     }//EOF Down case
   
     else if(move=='L'){
         //Checks if piece 1 is going to move to a valid space
         if(p1_x-1 >=0 && configuration[p1_y][p1_x-1] != 0){
-            newP1 = newP1 - 1;  //Moves piece 1 left
+            --newP1.first;  //Moves piece 1 left
         }
         //Checks if piece 2 is going to move to a valid space
         if(p2_x+1 <= width-1 && configuration[p2_y][p2_x+1] != 0){
-            newP2 = newP2 + 1;  //Moves piece 2 right
+            ++newP2.first;  //Moves piece 2 right
         }
-        newWolf = newWolf - 1;  //Moves the wolf left
+        --newWolf.first;  //Moves the wolf left
 
     }//EOF Left case
   
     else{
         //Checks if piece 1 is going to move to a valid space
         if(p1_x+1 <= length-1 && configuration[p1_y][p1_x+1] != 0){
-            newP1 = newP1 + 1;  //Moves piece 1 right
+            ++newP1.first;  //Moves piece 1 right
         }
         //Checks if piece 2 is going to move to a valid space
         if(p2_x-1 >= 0 && configuration[p2_y][p2_x-1] != 0){
-            newP2 = newP2 - 1;  //Moves piece 2 left
+            --newP2.first;  //Moves piece 2 left
         }
-        newWolf = newWolf + 1;  //Moves the wolf right
+        ++newWolf.first;  //Moves the wolf right
     
     }//EOF Right case
 
-    return 10000*newWolf + 100*newP2 + newP1;    //call to GameState constructor
+    return 100000*newWolf.first + 10000*newWolf.second + 1000*newP2.first
+	    		+ 100*newP2.second + 10*newP1.first + newP1.second;
 }//EOF generateID method
       
       
@@ -184,18 +183,20 @@ void GameGraph::generateNeighbors(GameState* currentState) {
           //if the move is valid
           if(validMove(currentState, move)){
               int neighborID = generateID(currentState, move);   //identifier of the neighbor
-              auto iter = gameMap.find(neighborID);  			 //search the gameMap for the neighbor
+              auto iter = gameMap.find(neighborID);  		 //search the gameMap for the neighbor
               //if the neighbor is not found (has not been created)...
               if(iter == gameMap.end()){
-                  neighbor = createState(neighborID);    			//create neighbor given the neighborID
-                  gameMap.insert(make_pair(neighborID, neighbor));  //add the newly created neighbor to the gameMap
-		  bool p1Final = ((neighborID/100)%100==target_1 || (neighborID/100)%100==target_2);	//if p1 is on a final position
-		  bool p2Final = (neighborID%100==final_1 || neighborID%100==final_2);	//if p2 is on a final position
+		      
+                  neighbor = createState(neighborID);    		//create neighbor given the neighborID
+                  gameMap.insert(make_pair(neighborID, neighbor));  	//add the newly created neighbor to the gameMap
+		      
+		  bool p1Final = (neighbor.p1==this->target_1 || neighbor.p2==this->target_2);	//if p1 is on a final position
+		  bool p2Final = (neighbor.p2==this->target_1 || neighbor.p2==this->target_2);	//if p2 is on a final position
+		      
 		  //if p1 and p2 aren't both on final spaces...
 		  if(!(p1Final && p2Final)){
 		      generateNeighbors(neighbor);       //recurrsively call generateNeighbors on the new neighbor
-
-		  }
+		  }      
 	      }//EOF if
           }//EOF if
           currentState->moves[i] = true;            //Since the move is valid
