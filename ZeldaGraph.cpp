@@ -160,15 +160,20 @@ int GameGraph::generateID(GameState* currentState, char move) {
     
     }//EOF Right case
 
-    return 100000*newWolf.first + 10000*newWolf.second + 1000*newP2.first
-	    		+ 100*newP2.second + 10*newP1.first + newP1.second;
+	int wolfID = 100*newWolf.first+newWolf.second;    //wolfXwolfY format
+	int piecesID = 1000000*newP1.first+10000*newP1.second+100*newP2.first+newP2.second;    //p1Xp1Yp2Xp2Y
+	pair<int,int> newID = {wolfID, piecesID};	//{wolfXwolfY,p1Xp1Yp2Xp2Y} format
+	
+    return newID;
 }//EOF generateID method
       
       
-GameState* GameGraph::createState(int ID) {
-    int newWolf = ID/10000;      //will give the first two digits
-    int newP1 = (ID/100) % 100;  //will give the middle two digits
-    int newP2 = ID % 100;        //will give the last two digits
+GameState* GameGraph::createState(pair<int,int> ID) {
+	//ex ID={2312 78900137} -> ID.first=2312, newWolf={23,12}
+	//ID.second = 78900137, newP1={78,90}, newP2={01,37}
+    pair<int,int> newWolf = {ID.first / 100, ID.first % 100};	//{first two digits of wolf, last two digits of wolf} 
+    pair<int,int> newP1 = {ID.second/1000000, (ID.second/10000)%100};  //{first two digits of ID.second, 3rd and 4th digit}
+    pair<int,int> newP2 = {(ID.second/100)%100, ID%100};  //{5th and 6th digit, last two digits}
 
     GameState* newState = new GameState(newP1, newP2, newWolf);  //creates new state
     return newState;
@@ -182,7 +187,7 @@ void GameGraph::generateNeighbors(GameState* currentState) {
           GameState* neighbor;
           //if the move is valid
           if(validMove(currentState, move)){
-              int neighborID = generateID(currentState, move);   //identifier of the neighbor
+              auto neighborID = generateID(currentState, move);  //identifier of the neighbor
               auto iter = gameMap.find(neighborID);  		 //search the gameMap for the neighbor
               //if the neighbor is not found (has not been created)...
               if(iter == gameMap.end()){
