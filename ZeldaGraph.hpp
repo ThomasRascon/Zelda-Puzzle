@@ -1,22 +1,23 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
+#include <utility>
 #include <map>
 
 using namespace std;
 
 struct GameState {
-  int p1;
-  int p2;
-  int wolf;
-  bool connected; // whether or not connected to initial state
+  pair<int,int> p1;
+  pair<int,int> p2;
+  pair<int,int> wolf;
+  bool visited;
   bool moves[4]; // all possible movements from current state (order: Up, Down, Left, Right)
   GameState* neighbors[4]; // possible neighbors, corresponds to validMoves (nullptr if invalid)
-  GameState(int p1, int p2, int wolf) {
+  GameState(pair<int,int> p1, pair<int,int> p2, pair<int,int> wolf) {
     this->p1 = p1;
     this->p2 = p2;
     this->wolf = wolf;
-    this->connected = false;
+    this->visted = false;
   }
 };
 
