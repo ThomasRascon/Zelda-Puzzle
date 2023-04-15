@@ -30,11 +30,11 @@ class GameGraph {
     int length;
     int width;
     //positions are the target spaces
-    int target_1;
-    int target_2;
+    pair<int,int> target_1;
+    pair<int,int> target_2;
     vector<vector<int>> configuration; // board configuration
     GameState* initalState;
-    map<int, GameState*> gameMap;
+    map<pair<int,int>, GameState*> gameMap;
       
   public:
   
