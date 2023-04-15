@@ -19,7 +19,8 @@ pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
 }//EOF pairToID
 
 
-GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, pair<int,int> target_1, pair<int,int> target_2) {
+GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration,
+					 			pair<int,int> target_1, pair<int,int> target_2) {
       this->length = length;
       this->width = width;
       this->configuration = configuration;
@@ -245,34 +246,32 @@ GameState* GameGraph::createState(pair<int,int> ID) {
 }//EOF createNeighbor method
 
 
-void GameGraph::createConnections(GameState* currentState) {
+GameGraph::createConnections(GameState* currentState) {
       //loops through each possible move (Up, Down, Left, Right)
 	  currentState->visited = true;
       for(int i = 0; i < 4; ++i){  
           char move = moveTypes[i];
-          GameState* neighbor;
-          //if the move is valid
+          //if the move is valid...
           if(validMove(currentState, move)){
+			  
               auto neighborID = generateID(currentState, move);  //identifier of the neighbor
-              auto iter = gameMap.find(neighborID);  		 //search the gameMap for the neighbor
-              //if the neighbor is not found (has not been created)...
-              if(iter == gameMap.end()){
+              auto iter = gameMap.find(neighborID);  		 	 //search the gameMap for the neighbor
+			  GameState* neighbor = *iter;
+			  
+              //if the neighbor has not been visited yet...
+              if(!neighbor->visited){
 		      
-                  neighbor = createState(neighborID);    		//create neighbor given the neighborID
-                  gameMap.insert(make_pair(neighborID, neighbor));  	//add the newly created neighbor to the gameMap
-		      
-		  bool p1Final = (neighbor.p1==this->target_1 || neighbor.p2==this->target_2);	//if p1 is on a final position
-		  bool p2Final = (neighbor.p2==this->target_1 || neighbor.p2==this->target_2);	//if p2 is on a final position
-		      
-		  //if p1 and p2 aren't both on final spaces...
-		  if(!(p1Final && p2Final)){
-		      generateNeighbors(neighbor);       //recurrsively call generateNeighbors on the new neighbor
-		  }      
-	      }//EOF if
-          }//EOF if
-          currentState->moves[i] = true;            //Since the move is valid
-          currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
-      }//EOF for loop
-}//EOF generateNeighbors method
+				  bool p1Final = (neighbor->p1==this->target_1 || neighbor->p2==this->target_2);	//if p1 is on a final position
+				  bool p2Final = (neighbor->p2==this->target_1 || neighbor->p2==this->target_2);	//if p2 is on a final position
 
-
+				  //if p1 and p2 aren't both on final spaces (i.e. *iter isn't a target state)...
+				  if(!(p1Final && p2Final)){
+					  createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
+				  }   
+		      }//EOF if
+			  
+			  currentState->moves[i] = true;            //Since the move is valid
+          	  currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
+          }//EOF if (move is valid)
+      }//EOF for loop (moves loop)
+}//EOF createConnections method
