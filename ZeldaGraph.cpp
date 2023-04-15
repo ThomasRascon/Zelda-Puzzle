@@ -10,6 +10,15 @@ bool validMove(GameState* currentState, char move);
 int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
 
+pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
+	int wolfID = 100*wolf.first+wolf.second;    //wolfXwolfY format
+	int piecesID = 1000000*p1.first+10000*p1.second+100*p2.first+p2.second;    //p1Xp1Yp2Xp2Y
+	pair<int,int> ID = {wolfID, piecesID};		//{wolfXwolfY,p1Xp1Yp2Xp2Y} format
+	
+	return ID;
+}//EOF pairToID
+
+
 GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, pair<int,int> target_1, pair<int,int> target_2) {
       this->length = length;
       this->width = width;
@@ -17,6 +26,66 @@ GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration, p
       this->target_1 = target_1;
       this->target_2 = target_2;
 }//EOF GameGraph constructor
+
+
+GameGraph::populateMap(){
+	//iterate through the possible positions of the wolf
+	for(int i = 0; i < this->length*this->width; ++i){
+		
+		wolf_x = i % width;
+		wolf_y = i / length;
+		
+		//if this is not a valid space...
+		if(configuration[wolf_y][wolf_x]==0){
+			continue;	//move to the next space
+		}
+		
+		pair<int,int> wolf = {wolf_x, wolf_y};
+		
+		//iterate through the possible positions of piece 1
+		for(int j = 0; j < this->length*this->width; ++j){
+			
+			//if wolf and p1 collide...
+			if(j==i){
+				continue;
+			}
+			
+			p1_x = j % width;
+			p1_y = j / length;
+		
+			//if this is not a valid space...
+			if(configuration[p1_y][p1_x]==0){
+				continue;	//move to the next space
+			}
+		
+			pair<int,int> p1 = {p1_x, p1_y};
+			
+			//iterate through the possible positions of piece 2
+			for(int k = 0; k < this->length*this->width; ++k){
+				
+				//if p2 collides with wolf or p1...
+				if(k==i || k==j){
+					continue;
+				}
+				
+				p2_x = k % width;
+				p2_y = k / length;
+
+				//if this is not a valid space...
+				if(configuration[p2_y][p2_x]==0){
+					continue;	//move to the next space
+				}
+
+				pair<int,int> p2 = {p2_x, p2_y};
+				
+				GameState* state = new createState(wolf, p1, p2);	//create the new state
+				pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
+				gameMap.insert({ID, state});						//insert it into the map
+				
+			}//EOF p2 for loop
+		}//EOF p1 for loop
+	}//EOF wolf for loop
+}//EOF populateMap
 
 
 bool GameGraph::validMove(GameState* currentState, char move) {
@@ -159,12 +228,8 @@ int GameGraph::generateID(GameState* currentState, char move) {
         ++newWolf.first;  //Moves the wolf right
     
     }//EOF Right case
-
-	int wolfID = 100*newWolf.first+newWolf.second;    //wolfXwolfY format
-	int piecesID = 1000000*newP1.first+10000*newP1.second+100*newP2.first+newP2.second;    //p1Xp1Yp2Xp2Y
-	pair<int,int> newID = {wolfID, piecesID};	//{wolfXwolfY,p1Xp1Yp2Xp2Y} format
 	
-    return newID;
+    return pairsToID(newWolf, newP1, newP2);
 }//EOF generateID method
       
       
@@ -180,8 +245,9 @@ GameState* GameGraph::createState(pair<int,int> ID) {
 }//EOF createNeighbor method
 
 
-void GameGraph::generateNeighbors(GameState* currentState) {
+void GameGraph::createConnections(GameState* currentState) {
       //loops through each possible move (Up, Down, Left, Right)
+	  currentState->visited = true;
       for(int i = 0; i < 4; ++i){  
           char move = moveTypes[i];
           GameState* neighbor;
@@ -208,3 +274,5 @@ void GameGraph::generateNeighbors(GameState* currentState) {
           currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
       }//EOF for loop
 }//EOF generateNeighbors method
+
+
