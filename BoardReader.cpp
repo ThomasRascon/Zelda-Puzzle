@@ -2,9 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+using namespace std;
 
 vector<vector<int>> readBoard(string filename){
-    std::ifstream infile("filename.txt");
+    std::ifstream infile(filename);
     std::string line;
 
     std::vector<std::vector<int>> configuration;
@@ -20,4 +21,22 @@ vector<vector<int>> readBoard(string filename){
 
         configuration.push_back(row);
     }//EOF while
+    return configuration;
 }//EOF readBoard
+
+int main() {
+
+    vector<vector<int>> board = readBoard("board1.txt");
+    
+    for(const auto& row:board) {
+        for(const auto& val:row) {
+
+            
+            cout << val << " ";
+        }
+        cout << "\n";
+    }
+
+    return 0;       
+}
+
