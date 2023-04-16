@@ -20,7 +20,7 @@ pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
 
 
 GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration,
-					 			pair<int,int> target_1, pair<int,int> target_2) {
+				pair<int,int> target_1, pair<int,int> target_2) {
       this->length = length;
       this->width = width;
       this->configuration = configuration;
@@ -275,3 +275,14 @@ GameGraph::createConnections(GameState* currentState) {
           }//EOF if (move is valid)
       }//EOF for loop (moves loop)
 }//EOF createConnections method
+
+
+void GameGraph::build() {
+	populateMap();
+	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+		GameState* curr = *iter;
+		if(!curr->visited){
+			createConnections(curr);
+		}
+	}
+}//EOF build
