@@ -12,8 +12,9 @@ struct GameState {
   pair<int,int> wolf;
   bool visited;
   bool onSolution;  //if you can get from this state to a target state
-  bool moves[4]; // all possible movements from current state (order: Up, Down, Left, Right)
-  GameState* neighbors[4]; // possible neighbors, corresponds to validMoves (nullptr if invalid)
+  bool moves[4];    //all possible movements from current state (order: Up, Down, Left, Right)
+  GameState* neighbors[4];  // possible neighbors, corresponds to validMoves (nullptr if invalid)
+  list<GameState*> parents; //list of all states connecting to this state
   GameState(pair<int,int> p1, pair<int,int> p2, pair<int,int> wolf) {
     this->p1 = p1;
     this->p2 = p2;
