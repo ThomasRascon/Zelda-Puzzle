@@ -42,6 +42,8 @@ class GameGraph {
      * GameGraph constructor
      */
     GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier);
+  
+    populateMap();
 
     // work from initial state
     // iterate through 4 possible directions, asking ValidMove if each direction is possible
