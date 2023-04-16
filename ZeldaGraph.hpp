@@ -43,7 +43,7 @@ class GameGraph {
      */
     GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier);
   
-    populateMap();
+    void populateMap();
 
     // work from initial state
     // iterate through 4 possible directions, asking ValidMove if each direction is possible
@@ -51,7 +51,7 @@ class GameGraph {
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
     // NOTE: This seems to also be defined in ZeldaGraph.cpp
-    createConnections(GameState* currentState);
+    void createConnections(GameState* currentState);
   
     // uses configuration, which is a global variable and game rules to return whether
     // you can go from CurrentState to direction up, down, left, or right, specified 
@@ -67,4 +67,6 @@ class GameGraph {
      * Takes in the unique identifier of a state and creates it
      */
     GameState* createState(int ID);
+  
+    void build();
 };
