@@ -64,7 +64,7 @@ class GameGraph {
     /**
      * Takes in the current state and the move you wish to make and creates the ID of the next state
      */
-    int generateID(GameState* currentState, char move);
+    pair<int,int> generateID(GameState* currentState, char move);
   
     /**
      * Takes in the unique identifier of a state and creates it

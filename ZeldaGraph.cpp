@@ -93,7 +93,7 @@ void GameGraph::populateMap(){
 				pair<int,int> p2 = {p2_x, p2_y};
 				
         pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
-				GameState* state = new createState(ID);	//create the new state
+				GameState* state = createState(ID);	//create the new state
 				gameMap.insert({ID, state});						//insert it into the map
 				
 			}//EOF p2 for loop
@@ -181,7 +181,7 @@ bool GameGraph::validMove(GameState* currentState, char move) {
 }//EOF validMove method
 
       
-int GameGraph::generateID(GameState* currentState, char move) {
+pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
     pair<int,int> newWolf = currentState->wolf;
     pair<int,int> newP1 = currentState->p1;
     pair<int,int> newP2 = currentState->p2;
@@ -202,7 +202,7 @@ int GameGraph::generateID(GameState* currentState, char move) {
         if(p2_y+1 <= length-1 && configuration[p2_y+1][p2_x] != 0){
             ++newP2.second;  //Moves piece 2 down
         }
-        --newWolf.second  //Moves the wolf up
+        --newWolf.second;  //Moves the wolf up
     }//EOF Up case
   
     else if(move=='D'){
@@ -247,7 +247,7 @@ int GameGraph::generateID(GameState* currentState, char move) {
 }//EOF generateID method
 
 
-GameGraph::createConnections(GameState* currentState) {
+void GameGraph::createConnections(GameState* currentState) {
       //loops through each possible move (Up, Down, Left, Right)
 	  currentState->visited = true;
       for(int i = 0; i < 4; ++i){  
