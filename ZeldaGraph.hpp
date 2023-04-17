@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <map>
+#include <list>
 
 using namespace std;
 
@@ -19,7 +20,7 @@ struct GameState {
     this->p1 = p1;
     this->p2 = p2;
     this->wolf = wolf;
-    this->visted = false;
+    this->visited = false;
   }
 };
 
@@ -42,7 +43,8 @@ class GameGraph {
     /**
      * GameGraph constructor
      */
-    GameGraph(int length, int width, vector<vector<int>> configuration, int initalIdentifier);
+    GameGraph(int length, int width, vector<vector<int>> configuration, 
+                        pair<int,int> target_1, pair<int,int> target_2);
   
     void populateMap();
 
@@ -67,7 +69,7 @@ class GameGraph {
     /**
      * Takes in the unique identifier of a state and creates it
      */
-    GameState* createState(int ID);
+    GameState* createState(pair<int,int> ID);
   
     void build();
 };

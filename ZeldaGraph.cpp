@@ -6,11 +6,12 @@ using namespace std;
 const char moveTypes[4] = {'U','D','L','R'};
 
 // functions from ZeldaGraph.hpp
+void populateMap();
 bool validMove(GameState* currentState, char move);
 int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
 
-pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
+pair<int,int> pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
 	int wolfID = 100*wolf.first+wolf.second;    //wolfXwolfY format
 	int piecesID = 1000000*p1.first+10000*p1.second+100*p2.first+p2.second;    //p1Xp1Yp2Xp2Y
 	pair<int,int> ID = {wolfID, piecesID};		//{wolfXwolfY,p1Xp1Yp2Xp2Y} format
@@ -29,12 +30,24 @@ GameGraph::GameGraph(int length, int width, vector<vector<int>> configuration,
 }//EOF GameGraph constructor
 
 
-GameGraph::populateMap(){
+GameState* GameGraph::createState(pair<int,int> ID) {
+	//ex ID={2312 78900137} -> ID.first=2312, newWolf={23,12}
+	//ID.second = 78900137, newP1={78,90}, newP2={01,37}
+    pair<int,int> newWolf = {ID.first / 100, ID.first % 100};	//{first two digits of wolf, last two digits of wolf} 
+    pair<int,int> newP1 = {ID.second/1000000, (ID.second/10000)%100};  //{first two digits of ID.second, 3rd and 4th digit}
+    pair<int,int> newP2 = {(ID.second/100)%100, ID.second%100};  //{5th and 6th digit, last two digits}
+
+    GameState* newState = new GameState(newP1, newP2, newWolf);  //creates new state
+    return newState;
+}//EOF createNeighbor method
+
+
+void GameGraph::populateMap(){
 	//iterate through the possible positions of the wolf
 	for(int i = 0; i < this->length*this->width; ++i){
 		
-		wolf_x = i % width;
-		wolf_y = i / length;
+		int wolf_x = i % width;
+		int wolf_y = i / length;
 		
 		//if this is not a valid space...
 		if(configuration[wolf_y][wolf_x]==0){
@@ -51,8 +64,8 @@ GameGraph::populateMap(){
 				continue;
 			}
 			
-			p1_x = j % width;
-			p1_y = j / length;
+			int p1_x = j % width;
+			int p1_y = j / length;
 		
 			//if this is not a valid space...
 			if(configuration[p1_y][p1_x]==0){
@@ -69,8 +82,8 @@ GameGraph::populateMap(){
 					continue;
 				}
 				
-				p2_x = k % width;
-				p2_y = k / length;
+				int p2_x = k % width;
+				int p2_y = k / length;
 
 				//if this is not a valid space...
 				if(configuration[p2_y][p2_x]==0){
@@ -79,8 +92,8 @@ GameGraph::populateMap(){
 
 				pair<int,int> p2 = {p2_x, p2_y};
 				
-				GameState* state = new createState(wolf, p1, p2);	//create the new state
-				pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
+        pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
+				GameState* state = new createState(ID);	//create the new state
 				gameMap.insert({ID, state});						//insert it into the map
 				
 			}//EOF p2 for loop
@@ -232,18 +245,6 @@ int GameGraph::generateID(GameState* currentState, char move) {
 	
     return pairsToID(newWolf, newP1, newP2);
 }//EOF generateID method
-      
-      
-GameState* GameGraph::createState(pair<int,int> ID) {
-	//ex ID={2312 78900137} -> ID.first=2312, newWolf={23,12}
-	//ID.second = 78900137, newP1={78,90}, newP2={01,37}
-    pair<int,int> newWolf = {ID.first / 100, ID.first % 100};	//{first two digits of wolf, last two digits of wolf} 
-    pair<int,int> newP1 = {ID.second/1000000, (ID.second/10000)%100};  //{first two digits of ID.second, 3rd and 4th digit}
-    pair<int,int> newP2 = {(ID.second/100)%100, ID%100};  //{5th and 6th digit, last two digits}
-
-    GameState* newState = new GameState(newP1, newP2, newWolf);  //creates new state
-    return newState;
-}//EOF createNeighbor method
 
 
 GameGraph::createConnections(GameState* currentState) {
