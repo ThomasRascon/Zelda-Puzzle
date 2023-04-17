@@ -257,21 +257,22 @@ void GameGraph::createConnections(GameState* currentState) {
 			  
               auto neighborID = generateID(currentState, move);  //identifier of the neighbor
               auto iter = gameMap.find(neighborID);  		 	 //search the gameMap for the neighbor
-			  GameState* neighbor = *iter;
+			        GameState* neighbor = *(iter).second;
 			  
               //if the neighbor has not been visited yet...
               if(!neighbor->visited){
 		      
-				  bool p1Final = (neighbor->p1==this->target_1 || neighbor->p2==this->target_2);	//if p1 is on a final position
-				  bool p2Final = (neighbor->p2==this->target_1 || neighbor->p2==this->target_2);	//if p2 is on a final position
+                  bool p1Final = (neighbor->p1==this->target_1 || neighbor->p2==this->target_2);	//if p1 is on a final position
+                  bool p2Final = (neighbor->p2==this->target_1 || neighbor->p2==this->target_2);	//if p2 is on a final position
 
-				  //if p1 and p2 aren't both on final spaces (i.e. *iter isn't a target state)...
-				  if(!(p1Final && p2Final)){
-					  createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
-				  }   
-		      }//EOF if
+                  //if p1 and p2 aren't both on final spaces (i.e. *iter isn't a target state)...
+                  if(!(p1Final && p2Final)){
+                    createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
+                  }
+
+              }//EOF if
 			  
-			  currentState->moves[i] = true;            //Since the move is valid
+			        currentState->moves[i] = true;            //Since the move is valid
           	  currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
           }//EOF if (move is valid)
       }//EOF for loop (moves loop)
