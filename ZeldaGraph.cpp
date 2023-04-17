@@ -272,7 +272,7 @@ void GameGraph::createConnections(GameState* currentState) {
 
               }//EOF if
 			  
-			        currentState->moves[i] = true;            //Since the move is valid
+			  currentState->moves[i] = true;            //Since the move is valid
           	  currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
           }//EOF if (move is valid)
       }//EOF for loop (moves loop)
