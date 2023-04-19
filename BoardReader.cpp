@@ -10,12 +10,12 @@ vector<vector<int>> readBoard(string filename){
 
     std::vector<std::vector<int>> configuration;
 
-    while (std::getline(infile, line)) {
+    while(std::getline(infile, line)) {
         std::istringstream iss(line);
         std::vector<int> row;
 
         int val;
-        while (iss >> val) {
+        while(iss >> val) {
             row.push_back(val);
         }
 
@@ -24,19 +24,18 @@ vector<vector<int>> readBoard(string filename){
     return configuration;
 }//EOF readBoard
 
-int main() {
 
-    vector<vector<int>> board = readBoard("board1.txt");
-    
-    for(const auto& row:board) {
-        for(const auto& val:row) {
-
-            
-            cout << val << " ";
+vector<int> findTargets(vector<vector<int>> board) {
+    int length = board.size();
+    int width = board[0].size();
+    vector<int> cords;
+    for(int i = 0; i < length; ++i){
+        for(int j = 0; j < width; ++j){
+            if(board[i][j]==2){
+                cords.push_back(i);
+                cords.push_back(j);
+            }
         }
-        cout << "\n";
     }
-
-    return 0;       
-}
-
+    return cords;
+}//EOF findTargets
