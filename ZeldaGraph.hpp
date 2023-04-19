@@ -1,3 +1,6 @@
+#ifndef ZELDA_GRAPH_H
+#define ZELDA_GRAPH_H
+
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -43,8 +46,8 @@ class GameGraph {
     /**
      * GameGraph constructor
      */
-    GameGraph(int length, int width, vector<vector<int>> configuration, 
-                        pair<int,int> target_1, pair<int,int> target_2);
+    GameGraph(vector<vector<int>> configuration, 
+              pair<int,int> target_1, pair<int,int> target_2);
   
     void populateMap();
 
@@ -73,3 +76,5 @@ class GameGraph {
   
     void build();
 };
+
+#endif
