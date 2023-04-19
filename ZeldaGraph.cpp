@@ -89,11 +89,13 @@ void GameGraph::populateMap(){
 
 				pair<int,int> p2 = {p2_x, p2_y};
 				
-        pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
+        		pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
 				GameState* state = createState(ID);	      //create the new state
-        cout << state->wolf.second << "," << state->wolf.first << "; " <<
-            state->p1.second << "," << state->p1.first << "; " <<
-            state->p2.second << "," << state->p2.first << endl;
+				
+        		cout << state->wolf.second << "," << state->wolf.first << "; " <<
+            	state->p1.second << "," << state->p1.first << "; " <<
+            	state->p2.second << "," << state->p2.first << endl;
+				
 				gameMap.insert({ID, state});						//insert it into the map
 
 			}//EOF p2 for loop
