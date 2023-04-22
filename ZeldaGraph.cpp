@@ -31,19 +31,19 @@ GameGraph::GameGraph(vector<vector<int>> configuration,
 }//EOF GameGraph constructor
 
 
-GameState* GameGraph::createState(pair<int,int> ID) {
+GameState* GameGraph::createState(pair<int,int> ID, bool target) {
 	//ex ID={2312 78900137} -> ID.first=2312, newWolf={23,12}
 	//ID.second = 78900137, newP1={78,90}, newP2={01,37}
     pair<int,int> newWolf = {ID.first / 100, ID.first % 100};	//{first two digits of wolf, last two digits of wolf} 
     pair<int,int> newP1 = {ID.second/1000000, (ID.second/10000)%100};  //{first two digits of ID.second, 3rd and 4th digit}
     pair<int,int> newP2 = {(ID.second/100)%100, ID.second%100};  //{5th and 6th digit, last two digits}
 
-    GameState* newState = new GameState(newP1, newP2, newWolf);  //creates new state
+    GameState* newState = new GameState(newP1, newP2, newWolf, target);  //creates new state
     return newState;
 }//EOF createState method
 
 
-void GameGraph::populateMap(){
+void GameGraph::populateMap() {
 	//iterate through the possible positions of the wolf
 	for(int i = 0; i < this->length*this->width; ++i){
 		int wolf_x = i % width;
@@ -88,13 +88,17 @@ void GameGraph::populateMap(){
 				}
 
 				pair<int,int> p2 = {p2_x, p2_y};
+
+        bool p1Final = (p1==this->target_1 || p1==this->target_2);	//if p1 is on a final position
+        bool p2Final = (p2==this->target_1 || p2==this->target_2);	//if p2 is on a final position
+        bool isTarget = p1Final && p2Final;
 				
         pair<int,int> ID = pairsToID(wolf, p1, p2);			//creat its ID
-				GameState* state = createState(ID);	      //create the new state
-        cout << state->wolf.second << "," << state->wolf.first << "; " <<
-            state->p1.second << "," << state->p1.first << "; " <<
-            state->p2.second << "," << state->p2.first << endl;
-				gameMap.insert({ID, state});						//insert it into the map
+				GameState* state = createState(ID, isTarget);	  //create the new state
+        // cout << state->wolf.second << "," << state->wolf.first << "; " <<
+        //     state->p1.second << "," << state->p1.first << "; " <<
+        //     state->p2.second << "," << state->p2.first << endl;
+				gameMap.insert({ID, state});					          //insert it into the map
 
 			}//EOF p2 for loop
 		}//EOF p1 for loop
@@ -259,20 +263,12 @@ void GameGraph::createConnections(GameState* currentState) {
               auto iter = gameMap.find(neighborID);  		 	 //search the gameMap for the neighbor
 			        GameState* neighbor = (*iter).second;
 			  
-              //if the neighbor has not been visited yet...
-              if(!neighbor->visited){
-		      
-                  bool p1Final = (neighbor->p1==this->target_1 || neighbor->p2==this->target_2);	//if p1 is on a final position
-                  bool p2Final = (neighbor->p2==this->target_1 || neighbor->p2==this->target_2);	//if p2 is on a final position
-
-                  //if p1 and p2 aren't both on final spaces (i.e. *iter isn't a target state)...
-                  if(!(p1Final && p2Final)){
-                    createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
-                  }
-
+              //if the neighbor has not been visited yet and is not a target state...
+              if(!(neighbor->visited || neighbor->target)){
+                  createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
               }//EOF if
 			  
-			  currentState->moves[i] = true;            //Since the move is valid
+			        currentState->moves[i] = true;            //Since the move is valid
           	  currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
           }//EOF if (move is valid)
       }//EOF for loop (moves loop)
@@ -283,8 +279,27 @@ void GameGraph::build() {
 	populateMap();
 	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
 		GameState* curr = (*iter).second;
-		if(!curr->visited){
+		if(!(curr->visited || curr->target)){
 			createConnections(curr);
+      for(int i = 0; i < 4; ++i){
+        auto neighbor = curr->neighbors[i];
+      }
 		}
+	}
+
+
+  for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+		GameState* curr = (*iter).second;
+    cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
+          curr->p1.second << "," << curr->p1.first << "; " <<
+          curr->p2.second << "," << curr->p2.first << endl;
+    for(int i = 0; i < 4; ++i){
+      auto neighbor = curr->neighbors[i];
+      if(neighbor!=nullptr){
+        cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+          neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+          neighbor->p2.second << "," << neighbor->p2.first << endl;
+      }
+    }
 	}
 }//EOF build

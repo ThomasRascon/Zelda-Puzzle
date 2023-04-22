@@ -15,15 +15,17 @@ struct GameState {
   pair<int,int> p2;
   pair<int,int> wolf;
   bool visited;
+  bool target;
   bool onSolution;  //if you can get from this state to a target state
-  bool moves[4];    //all possible movements from current state (order: Up, Down, Left, Right)
-  GameState* neighbors[4];  // possible neighbors, corresponds to validMoves (nullptr if invalid)
+  bool moves[4]{};    //all possible movements from current state (order: Up, Down, Left, Right)
+  GameState* neighbors[4]{};  // possible neighbors, corresponds to validMoves (nullptr if invalid)
   list<GameState*> parents; //list of all states connecting to this state
-  GameState(pair<int,int> p1, pair<int,int> p2, pair<int,int> wolf) {
+  GameState(pair<int,int> p1, pair<int,int> p2, pair<int,int> wolf, bool target) {
     this->p1 = p1;
     this->p2 = p2;
     this->wolf = wolf;
     this->visited = false;
+    this->target = target;
   }
 };
 
@@ -72,7 +74,7 @@ class GameGraph {
     /**
      * Takes in the unique identifier of a state and creates it
      */
-    GameState* createState(pair<int,int> ID);
+    GameState* createState(pair<int,int> ID, bool target);
   
     void build();
 };

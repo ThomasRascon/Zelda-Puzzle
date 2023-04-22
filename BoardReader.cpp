@@ -32,8 +32,8 @@ vector<int> findTargets(vector<vector<int>> board) {
     for(int i = 0; i < length; ++i){
         for(int j = 0; j < width; ++j){
             if(board[i][j]==2){
-                cords.push_back(i);
                 cords.push_back(j);
+                cords.push_back(i);
             }
         }
     }
