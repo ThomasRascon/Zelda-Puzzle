@@ -11,14 +11,6 @@ bool validMove(GameState* currentState, char move);
 int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
 
-pair<int,int> pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
-	int wolfID = 100*wolf.first+wolf.second;    //wolfXwolfY format
-	int piecesID = 1000000*p1.first+10000*p1.second+100*p2.first+p2.second;    //p1Xp1Yp2Xp2Y
-	pair<int,int> ID = {wolfID, piecesID};		//{wolfXwolfY,p1Xp1Yp2Xp2Y} format
-	
-	return ID;
-}//EOF pairToID
-
 
 GameGraph::GameGraph(vector<vector<int>> configuration,
         pair<int,int> target_1, pair<int,int> target_2) {
@@ -117,7 +109,7 @@ bool GameGraph::validMove(GameState* currentState, char move) {
     
     if(move=='U'){
         
-        //Check if the wolf falls off the border of the map
+        //Check if the wolf will fall off the border of the map
         if(wolf_y == 0){
             return false;
         }
@@ -126,7 +118,7 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         }
         //Make sure no collisions occur
-        if(wolf_y-1 == p1_y || wolf_y-1 == p2_y || wolf_y-1 == p2_y+1){
+        if(wolf_y-1 == p1_y || wolf_y-1 == p2_y){
             return false;
         }  
 
@@ -134,7 +126,7 @@ bool GameGraph::validMove(GameState* currentState, char move) {
     
     else if(move=='D'){
         
-        //Check if the wolf falls off the border of the map
+        //Check if the wolf will fall off the border of the map
         if(wolf_y == length-1){
             return false;
         }
@@ -143,14 +135,14 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         }
         //Make sure no collisions occur
-        if(wolf_y+1 == p1_y || wolf_y+1 == p2_y || wolf_y+1 == p2_y-1){
+        if(wolf_y+1 == p1_y || wolf_y+1 == p2_y){
             return false;
         }
     }//EOF Down case
     
     else if(move=='L'){
         
-        //Check if the wolf falls off the border of the map
+        //Check if the wolf will fall off the border of the map
         if(wolf_x == 0){
             return false;
         }
@@ -159,15 +151,15 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         }
         //Make sure no collisions occur
-        if(wolf_x-1 == p1_x || wolf_x-1 == p2_x || wolf_x-1 == p2_x+1){
+        if(wolf_x-1 == p1_x || wolf_x-1 == p2_x){
             return false;
         }
     }//EOF Left case
     
     else{
         
-        //Check if the wolf falls off the border of the map
-        if(wolf_x+1 == length){
+        //Check if the wolf will fall off the border of the map
+        if(wolf_x == width-1){
             return false;
         }
         //Check if the wolf is moving onto a nonspace
@@ -175,7 +167,7 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         } 
         //Make sure no collisions occur
-        if(wolf_x+1 == p1_x || wolf_x+1 == p2_x || wolf_x+1 == p2_x-1){
+        if(wolf_x+1 == p1_x || wolf_x+1 == p2_x){
             return false;
         }
     }//EOF Right case
@@ -187,68 +179,56 @@ bool GameGraph::validMove(GameState* currentState, char move) {
 
       
 pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
-    pair<int,int> newWolf = currentState->wolf;
-    pair<int,int> newP1 = currentState->p1;
-    pair<int,int> newP2 = currentState->p2;
-    
-    int wolf_x = currentState->wolf.first;
-    int wolf_y = currentState->wolf.second;
-    int p1_x = currentState->p1.first;
-    int p1_y = currentState->p1.second;
-    int p2_x = currentState->p2.first;
-    int p2_y = currentState->p2.second;
+    pair<int,int> wolf = currentState->wolf;
+    pair<int,int> p1 = currentState->p1;
+    pair<int,int> p2 = currentState->p2;
+    array<bool, 2> canMove;
     
     if(move=='U'){
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_y-1 >= 0 && configuration[p1_y-1][p1_x] != 0){
-            --newP1.second;  //Moves piece 1 up
+        --wolf.second;      //Moves the wolf up
+        canMove = upCollision(wolf, p1, p2, configuration, length, width);
+        if(canMove[0]){
+            --p1.second;    //Moves p1 up
         }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_y+1 <= length-1 && configuration[p2_y+1][p2_x] != 0){
-            ++newP2.second;  //Moves piece 2 down
+        if(canMove[1]){
+            ++p2.second;    //Moves p2 down
         }
-        --newWolf.second;  //Moves the wolf up
     }//EOF Up case
   
     else if(move=='D'){
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_y+1 <= length-1 && configuration[p1_y+1][p1_x] != 0){
-            ++newP1.second;  //Moves piece 1 down
+        ++wolf.second;      //Moves the wolf down
+        canMove = downCollision(wolf, p1, p2, configuration, length, width);
+        if(canMove[0]){
+            ++p1.second;    //Moves p1 down
         }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_y-1 >= 0 && configuration[p2_y-1][p2_x] != 0){
-            --newP2.second;  //Moves piece 2 up
+        if(canMove[1]){
+            --p2.second;    //Moves p2 up
         }
-        ++newWolf.second;  //Moves the wolf down
     }//EOF Down case
   
     else if(move=='L'){
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_x-1 >=0 && configuration[p1_y][p1_x-1] != 0){
-            --newP1.first;  //Moves piece 1 left
+        --wolf.first;       //Moves the wolf left
+        canMove = leftCollision(wolf, p1, p2, configuration, length, width);
+        if(canMove[0]){
+            --p1.first;     //Moves p1 left
         }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_x+1 <= width-1 && configuration[p2_y][p2_x+1] != 0){
-            ++newP2.first;  //Moves piece 2 right
+        if(canMove[1]){
+            ++p2.first;     //Moves p2 right
         }
-        --newWolf.first;  //Moves the wolf left
-
     }//EOF Left case
   
     else{
-        //Checks if piece 1 is going to move to a valid space
-        if(p1_x+1 <= length-1 && configuration[p1_y][p1_x+1] != 0){
-            ++newP1.first;  //Moves piece 1 right
+        ++wolf.first;       //Moves the wolf right
+        canMove = rightCollision(wolf, p1, p2, configuration, length, width);
+        if(canMove[0]){
+            ++p1.first;     //Moves p1 right
         }
-        //Checks if piece 2 is going to move to a valid space
-        if(p2_x-1 >= 0 && configuration[p2_y][p2_x-1] != 0){
-            --newP2.first;  //Moves piece 2 left
+        if(canMove[1]){
+            --p2.first;     //Moves p2 left
         }
-        ++newWolf.first;  //Moves the wolf right
-    
     }//EOF Right case
 	
-    return pairsToID(newWolf, newP1, newP2);
+    return pairsToID(wolf, p1, p2);
 }//EOF generateID method
 
 
@@ -288,10 +268,7 @@ void GameGraph::build() {
         }
 
         createConnections(curr);
-        for(int i = 0; i < 4; ++i){
-            auto neighbor = curr->neighbors[i];
-        }
-	  }
+	}
 
 
     for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {

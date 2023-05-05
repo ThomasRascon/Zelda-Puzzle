@@ -7,6 +7,7 @@
 #include <utility>
 #include <map>
 #include <list>
+#include "Helper.cpp"
 
 using namespace std;
 
@@ -41,9 +42,9 @@ class GameGraph {
     pair<int,int> target_2;
     vector<vector<int>> configuration; // board configuration
     GameState* initalState;
-    map<pair<int,int>, GameState*> gameMap;
       
   public:
+    map<pair<int,int>, GameState*> gameMap;
   
     /**
      * GameGraph constructor
