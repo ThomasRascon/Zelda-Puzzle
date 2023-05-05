@@ -1,4 +1,5 @@
 #include "ZeldaGraph.hpp"
+#include "Helper.cpp"
 
 using namespace std;
 
@@ -10,15 +11,6 @@ void populateMap();
 bool validMove(GameState* currentState, char move);
 int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
-
-pair<int,int> pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2){
-	int wolfID = 100*wolf.first+wolf.second;    //wolfXwolfY format
-	int piecesID = 1000000*p1.first+10000*p1.second+100*p2.first+p2.second;    //p1Xp1Yp2Xp2Y
-  //01000000+000000+0200+00 = 1000000+200 = 1000200
-	pair<int,int> ID = {wolfID, piecesID};		//{wolfXwolfY,p1Xp1Yp2Xp2Y} format
-	
-	return ID;
-}//EOF pairToID
 
 
 GameGraph::GameGraph(vector<vector<int>> configuration,
@@ -129,9 +121,13 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         }
         //Make sure no collisions occur
-        if(wolf_y-1 == p1_y || wolf_y-1 == p2_y){
+        if((wolf_y-1 == p1_y && wolf_x == p1_x) || (wolf_y-1 == p2_y && wolf_x == p2_x)){
             return false;
         }  
+        //Make sure p2 doesn't crush the wolf
+        if(wolf_x == p2_x && wolf_y-1 == p2_y+1){
+            return false;
+        }
 
     }//EOF Up case
     
@@ -146,9 +142,14 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         }
         //Make sure no collisions occur
-        if(wolf_y+1 == p1_y || wolf_y+1 == p2_y){
+        if((wolf_y+1 == p1_y && wolf_x == p1_x) || (wolf_y+1 == p2_y && wolf_x == p2_x)){
             return false;
         }
+        //Make sure p2 doesn't crush the wolf
+        if(wolf_x == p2_x && wolf_y+1 == p2_y-1){
+            return false;
+        }
+
     }//EOF Down case
     
     else if(move=='L'){
@@ -157,12 +158,16 @@ bool GameGraph::validMove(GameState* currentState, char move) {
         if(wolf_x == 0){
             return false;
         }
-        //Check if the wolf is moving onto a nonspace
+        //Check if the wolf is moving onto an internal nonspace
         if(configuration[wolf_y][wolf_x-1] == 0){
             return false;
         }
         //Make sure no collisions occur
-        if(wolf_x-1 == p1_x || wolf_x-1 == p2_x){
+        if((wolf_x-1 == p1_x && wolf_y == p1_y) || (wolf_x-1 == p2_x && wolf_y == p2_y)){
+            return false;
+        }
+        //Make sure p2 doesn't crush the wolf
+        if(wolf_y == p2_y && wolf_x-1 == p2_x+1){
             return false;
         }
     }//EOF Left case
@@ -178,7 +183,11 @@ bool GameGraph::validMove(GameState* currentState, char move) {
             return false;
         } 
         //Make sure no collisions occur
-        if(wolf_x+1 == p1_x || wolf_x+1 == p2_x){
+        if((wolf_x+1 == p1_x && wolf_y == p1_y) || (wolf_x+1 == p2_x && wolf_y == p2_y)){
+            return false;
+        }
+        //Make sure p2 doesn't crush the wolf
+        if(wolf_y == p2_y && wolf_x+1 == p2_x-1){
             return false;
         }
     }//EOF Right case
@@ -253,14 +262,14 @@ void GameGraph::createConnections(GameState* currentState) {
 			  
               auto neighborID = generateID(currentState, move);  //identifier of the neighbor
               auto iter = gameMap.find(neighborID);  		 	 //search the gameMap for the neighbor
-			        GameState* neighbor = (*iter).second;
+			  GameState* neighbor = (*iter).second;
 			  
               //if the neighbor has not been visited yet and is not a target state...
               if(!(neighbor->visited || neighbor->target)){
                   createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
               }//EOF if
 			  
-			        currentState->moves[i] = true;            //Since the move is valid
+			  currentState->moves[i] = true;            //Since the move is valid
           	  currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
           }//EOF if (move is valid)
       }//EOF for loop (moves loop)
@@ -272,6 +281,9 @@ void GameGraph::build() {
 	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
 		GameState* curr = (*iter).second;
 		if(!(curr->visited || curr->target)){
+            cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
+            curr->p1.second << "," << curr->p1.first << "; " <<
+            curr->p2.second << "," << curr->p2.first << endl;
 			createConnections(curr);
       		for(int i = 0; i < 4; ++i){
         		auto neighbor = curr->neighbors[i];
