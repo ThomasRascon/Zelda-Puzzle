@@ -251,9 +251,9 @@ pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
 
 void GameGraph::createConnections(GameState* currentState) {
     //loops through each possible move (Up, Down, Left, Right)
-    cout << currentState->wolf.second << "," << currentState->wolf.first << "; " <<
-        currentState->p1.second << "," << currentState->p1.first << "; " <<
-        currentState->p2.second << "," << currentState->p2.first << endl;
+    // cout << currentState->wolf.second << "," << currentState->wolf.first << "; " <<
+    //     currentState->p1.second << "," << currentState->p1.first << "; " <<
+    //     currentState->p2.second << "," << currentState->p2.first << endl;
 
     if (currentState == reinterpret_cast<GameState*>(0xef7e08)) {
         cout << "ptr points to the memory address 0xef7e08" << endl;
@@ -273,10 +273,6 @@ void GameGraph::createConnections(GameState* currentState) {
             
             //if the neighbor has not been visited yet and is not a target state...
             if(!(neighbor->visited || neighbor->target)){
-                cout << move << ":\t";
-                cout << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-                neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-                neighbor->p2.second << "," << neighbor->p2.first << endl << endl;
                 createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
             }//EOF if
             
@@ -300,18 +296,20 @@ void GameGraph::build() {
 	}
 
 
-	// for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-	// 	GameState* curr = (*iter).second;
-    // 	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
-    //     curr->p1.second << "," << curr->p1.first << "; " <<
-    //     curr->p2.second << "," << curr->p2.first << endl;
-    // 	for(int i = 0; i < 4; ++i){
-    //   		auto neighbor = curr->neighbors[i];
-    //   		if(neighbor!=nullptr){
-    //     		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-    //       		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-    //       		neighbor->p2.second << "," << neighbor->p2.first << endl;
-    //   		}
-    // 	}
-  	// }
+    for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+    	GameState* curr = (*iter).second;
+    	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
+        curr->p1.second << "," << curr->p1.first << "; " <<
+        curr->p2.second << "," << curr->p2.first << endl;
+    	for(int i = 0; i < 4; ++i){
+      		auto neighbor = curr->neighbors[i];
+      		if(neighbor!=nullptr){
+                cout << moveTypes[i] << ":  ";
+        		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+          		neighbor->p2.second << "," << neighbor->p2.first << endl;
+      		}
+    	}
+        cout << endl;
+    }
 }//EOF build
