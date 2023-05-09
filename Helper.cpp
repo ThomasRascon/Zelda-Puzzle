@@ -89,7 +89,7 @@ array<bool, 2> leftCollision(pair<int,int> wolf,  pair<int,int> p1,
     array<bool, 2> canMove = {true, true};
 
     //Checks if piece 1 is going to move to a valid space
-    if(p1.first == 0 && configuration[p1.second][p1.first-1] == 0){
+    if(p1.first == 0 || configuration[p1.second][p1.first-1] == 0){
         canMove[0] = false;  //Moves piece 1 left
     }
 
