@@ -300,18 +300,18 @@ void GameGraph::build() {
 	}
 
 
-	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-		GameState* curr = (*iter).second;
-    	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
-        curr->p1.second << "," << curr->p1.first << "; " <<
-        curr->p2.second << "," << curr->p2.first << endl;
-    	for(int i = 0; i < 4; ++i){
-      		auto neighbor = curr->neighbors[i];
-      		if(neighbor!=nullptr){
-        		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-          		neighbor->p2.second << "," << neighbor->p2.first << endl;
-      		}
-    	}
-  	}
+	// for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+	// 	GameState* curr = (*iter).second;
+    // 	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
+    //     curr->p1.second << "," << curr->p1.first << "; " <<
+    //     curr->p2.second << "," << curr->p2.first << endl;
+    // 	for(int i = 0; i < 4; ++i){
+    //   		auto neighbor = curr->neighbors[i];
+    //   		if(neighbor!=nullptr){
+    //     		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+    //       		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+    //       		neighbor->p2.second << "," << neighbor->p2.first << endl;
+    //   		}
+    // 	}
+  	// }
 }//EOF build
