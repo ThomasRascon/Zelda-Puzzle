@@ -1,4 +1,5 @@
 #include "ZeldaGraph.hpp"
+#include "ZeldaGraph.cpp" 
 #include "BoardReader.cpp"
 
 using namespace std;
@@ -14,5 +15,5 @@ int main() {
     pair<int,int> target_2 = {targets[2], targets[3]};
 
     GameGraph* graph = new GameGraph(board, target_1, target_2);
-    graph->build();
+    graph->build("output.txt");
 }
