@@ -1,5 +1,6 @@
 #include "ZeldaGraph.hpp"
 #include "Helper.cpp"
+#include <fstream>
 
 using namespace std;
 
@@ -277,10 +278,10 @@ void GameGraph::createConnections(GameState* currentState) {
 }//EOF createConnections method
 
 
-void GameGraph::build() {
+void GameGraph::build(string output) {
 	populateMap();
 	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-        
+
 		GameState* curr = iter->second;
 		if(curr->visited || curr->target){
             continue;
@@ -292,11 +293,31 @@ void GameGraph::build() {
         }
 	}
 
+    ofstream o;
+    o.open(output);
+
+    o << "Board Configuration:" << endl;
+
+    // this could probably be done in a more clever way
+    for(int i=0; i<length; i++) { 
+        for(int j=0; j<width; j++) {
+            o << configuration[i][j] << " ";
+        }
+        o << endl;
+    }
+    
+    o << endl << "Possible states:" << endl;
+
     for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-    	GameState* curr = (*iter).second;
+    	GameState* curr = iter->second;
     	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
         curr->p1.second << "," << curr->p1.first << "; " <<
         curr->p2.second << "," << curr->p2.first << endl;
+
+        o << curr->wolf.second << "," << curr->wolf.first << "; " <<
+        curr->p1.second << "," << curr->p1.first << "; " <<
+        curr->p2.second << "," << curr->p2.first << endl;
+
     	for(int i = 0; i < 4; ++i){
       		auto neighbor = curr->neighbors[i];
       		if(neighbor!=nullptr){
@@ -304,10 +325,18 @@ void GameGraph::build() {
         		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
           		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
           		neighbor->p2.second << "," << neighbor->p2.first << endl;
+
+                o << moveTypes[i] << ":  ";
+        		o << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+          		neighbor->p2.second << "," << neighbor->p2.first << endl;
       		}
     	}
         cout << endl;
+
+        o << endl;
     }
+    o.close();
 }//EOF build
 
 

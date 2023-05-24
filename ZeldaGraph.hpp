@@ -81,7 +81,7 @@ class GameGraph {
      */
     GameState* createState(pair<int,int> ID, bool target);
   
-    void build();
+    void build(string output);
 };
 
 #endif
