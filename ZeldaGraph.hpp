@@ -41,15 +41,20 @@ class GameGraph {
     pair<int,int> target_2;
     vector<vector<int>> configuration; // board configuration
     GameState* initalState;
+    map<pair<int,int>, GameState*> gameMap;
       
   public:
-    map<pair<int,int>, GameState*> gameMap;
   
     /**
      * GameGraph constructor
      */
     GameGraph(vector<vector<int>> configuration, 
               pair<int,int> target_1, pair<int,int> target_2);
+
+    /**
+     * GameGraph deallocator
+     */
+    ~GameGraph();
   
     void populateMap();
 

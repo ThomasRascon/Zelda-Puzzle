@@ -250,35 +250,29 @@ pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
 
 
 void GameGraph::createConnections(GameState* currentState) {
-    //loops through each possible move (Up, Down, Left, Right)
-    // cout << currentState->wolf.second << "," << currentState->wolf.first << "; " <<
-    //     currentState->p1.second << "," << currentState->p1.first << "; " <<
-    //     currentState->p2.second << "," << currentState->p2.first << endl;
-
-    if (currentState == reinterpret_cast<GameState*>(0xef7e08)) {
-        cout << "ptr points to the memory address 0xef7e08" << endl;
-    }
 
     currentState->visited = true;
     for(int i = 0; i < 4; ++i){  
-        char move = moveTypes[i];
-        //if the move is valid...
-        if(validMove(currentState, move)){
-            
-            auto neighborID = generateID(currentState, move);  //identifier of the neighbor
-            auto iter = gameMap.find(neighborID);  		 	 //search the gameMap for the neighbor
-            GameState* neighbor = (*iter).second;
 
-            // cout << "(" << neighborID.first << "," << neighborID.second << ") ";
+        char move = moveTypes[i];
+
+        //if the move is not valid...
+        if(!validMove(currentState, move)){
+            continue;
+        }
             
-            //if the neighbor has not been visited yet and is not a target state...
-            if(!(neighbor->visited || neighbor->target)){
-                createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
-            }//EOF if
-            
-            currentState->moves[i] = true;            //Since the move is valid
-            currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
-        }//EOF if (move is valid)
+        auto neighborID = generateID(currentState, move);  //identifier of the neighbor
+        auto iter = gameMap.find(neighborID);  		 	   //search the gameMap for the neighbor
+        GameState* neighbor = iter->second;
+        
+        //if the neighbor has not been visited yet and is not a target state...
+        if(!(neighbor->visited || neighbor->target)){
+            createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
+        }//EOF if
+        
+        currentState->moves[i] = true;            //Since the move is valid
+        currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
+
     }//EOF for loop (moves loop)
 }//EOF createConnections method
 
@@ -286,15 +280,17 @@ void GameGraph::createConnections(GameState* currentState) {
 void GameGraph::build() {
 	populateMap();
 	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-		GameState* curr = (*iter).second;
-		if(!(curr->visited || curr->target)){
-			createConnections(curr);
-      		for(int i = 0; i < 4; ++i){
-        		auto neighbor = curr->neighbors[i];
-      		}
-		}
-	}
+        
+		GameState* curr = iter->second;
+		if(curr->visited || curr->target){
+            continue;
+        }
 
+        createConnections(curr);
+        for(int i = 0; i < 4; ++i){
+            auto neighbor = curr->neighbors[i];
+        }
+	}
 
     for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
     	GameState* curr = (*iter).second;
@@ -313,3 +309,10 @@ void GameGraph::build() {
         cout << endl;
     }
 }//EOF build
+
+
+GameGraph::~GameGraph(){
+    for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
+        delete iter->second;
+    }
+}
