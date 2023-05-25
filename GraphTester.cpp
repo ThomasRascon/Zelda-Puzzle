@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-    vector<vector<int>> board = readBoard("board1.txt");
+    vector<vector<int>> board = readBoard("BoardConfigs/board1.txt");
     vector<int> targets = findTargets(board);
     if(targets.size() != 4){
         cout << "Invalid input, exiting...\n";
