@@ -333,7 +333,6 @@ void GameGraph::build(string output) {
       		}
     	}
         cout << endl;
-
         o << endl;
     }
     o.close();

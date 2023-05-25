@@ -15,5 +15,5 @@ int main() {
     pair<int,int> target_2 = {targets[2], targets[3]};
 
     GameGraph* graph = new GameGraph(board, target_1, target_2);
-    graph->build("output.txt");
+    graph->build("OutputFiles/output.txt");
 }
