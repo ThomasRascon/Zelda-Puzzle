@@ -1,5 +1,4 @@
 #include "ZeldaGraph.hpp"
-#include "ZeldaGraph.cpp" 
 #include "BoardReader.cpp"
 
 using namespace std;

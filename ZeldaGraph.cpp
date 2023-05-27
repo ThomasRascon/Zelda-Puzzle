@@ -343,4 +343,4 @@ GameGraph::~GameGraph(){
     for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
         delete iter->second;
     }
-}
+}//EOF deallocator
