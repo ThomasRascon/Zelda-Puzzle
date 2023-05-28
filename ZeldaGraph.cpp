@@ -1,5 +1,6 @@
 #include "ZeldaGraph.hpp"
 #include "Helper.cpp"
+#include "BoardReader.cpp"
 #include <fstream>
 
 using namespace std;
@@ -14,15 +15,25 @@ int generateID(GameState* currentState, char move);
 GameState* createState(int ID);
 
 
-GameGraph::GameGraph(vector<vector<int>> configuration,
-        pair<int,int> target_1, pair<int,int> target_2) {
+GameGraph::GameGraph(vector<vector<int>> configuration) {
 
     this->length = configuration.size();
     this->width = configuration[0].size();
     this->configuration = configuration;
-    this->target_1 = target_1;
-    this->target_2 = target_2;
+
+    auto targets = findTargets(configuration);
+    this->target_1 = targets.first;
+    this->target_2 = targets.second;
 }//EOF GameGraph constructor
+
+
+GameState* GameGraph::getGameState(pair<int,int> ID) {
+    auto iter = gameMap.find(ID);
+    if(iter == gameMap.end()){
+        return nullptr;
+    }
+    return iter->second;
+}
 
 
 GameState* GameGraph::createState(pair<int,int> ID, bool target) {

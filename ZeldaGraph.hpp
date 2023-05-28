@@ -58,13 +58,14 @@ class GameGraph {
     /**
      * GameGraph constructor
      */
-    GameGraph(vector<vector<int>> configuration, 
-              pair<int,int> target_1, pair<int,int> target_2);
+    GameGraph(vector<vector<int>> configuration);
 
     /**
      * GameGraph deallocator
      */
     ~GameGraph();
+
+    GameState* getGameState(pair<int,int> ID);
   
     void populateMap();
 
