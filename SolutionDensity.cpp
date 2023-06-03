@@ -1,6 +1,7 @@
 #include <ctime>
 #include "ZeldaGraph.hpp"
-#include "BoardReader.cpp"
+#include "ZeldaGraph.cpp"
+//#include "BoardReader.cpp"
 #include "Helper.cpp"
 
 using namespace std;
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]){
     srand(time(0));
 
     if(argc != 5){
-        cout << "Please specify a width, heigh, and a probability density." << endl;
+        cout << "Please specify a width, heigh, probability density, and number of iterations." << endl;
         exit(1);
     }
     try
