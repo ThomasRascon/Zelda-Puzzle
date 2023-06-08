@@ -10,6 +10,7 @@ using namespace std;
 double SolutionDensity(vector<vector<int>> board){
 
     GameGraph* graph = new GameGraph(board);
+    graph->build("output.txt");
     auto targets = findTargets(board);
     int totalFinalStates = 0;
     int numVisited = 0;
@@ -18,16 +19,16 @@ double SolutionDensity(vector<vector<int>> board){
 
     for(int wolfIter = 0; wolfIter < width*height; ++wolfIter){
 
-        int wolf_x = wolfIter / width;
-        int wolf_y = wolfIter % width;
+        int wolf_x = wolfIter % width;
+        int wolf_y = wolfIter / width;
 
-        if(board[wolf_x][wolf_y] == 2 || board[wolf_x][wolf_y] == 0){
+        if(board[wolf_y][wolf_x] == 2 || board[wolf_y][wolf_x] == 0){
             continue;
         }
 
         pair<int,int> wolf = {wolf_x, wolf_y};
         pair<int,int> ID_1 = pairsToID(wolf, targets.first, targets.second);
-        pair<int,int> ID_2 = pairsToID(wolf, targets.first, targets.second);
+        pair<int,int> ID_2 = pairsToID(wolf, targets.second, targets.first);
         GameState* state_1 = graph->getGameState(ID_1);
         GameState* state_2 = graph->getGameState(ID_2);
 
@@ -40,7 +41,7 @@ double SolutionDensity(vector<vector<int>> board){
         totalFinalStates += 2;
     }//EOF wolf loop
 
-    return numVisited/totalFinalStates;
+    return (double)numVisited/totalFinalStates;
 }//EOF solutionDensity
 
 

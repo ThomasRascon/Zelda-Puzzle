@@ -264,6 +264,10 @@ pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
 void GameGraph::createConnections(GameState* currentState) {
 
     currentState->visited = true;
+    if(currentState->target){
+        return;
+    }
+    
     for(int i = 0; i < 4; ++i){  
 
         char move = moveTypes[i];
@@ -273,14 +277,13 @@ void GameGraph::createConnections(GameState* currentState) {
             continue;
         }
             
-        auto neighborID = generateID(currentState, move);  //identifier of the neighbor
-        auto iter = gameMap.find(neighborID);  		 	   //search the gameMap for the neighbor
-        GameState* neighbor = iter->second;
+        auto neighborID = generateID(currentState, move);        //identifier of the neighbor
+        GameState* neighbor = gameMap.find(neighborID)->second;  //search the gameMap for the neighbor
         
         //if the neighbor has not been visited yet and is not a target state...
-        if(!(neighbor->visited || neighbor->target)){
+        if(!neighbor->visited){
             createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
-        }//EOF if
+        }
         
         currentState->moves[i] = true;            //Since the move is valid
         currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
@@ -291,62 +294,61 @@ void GameGraph::createConnections(GameState* currentState) {
 
 void GameGraph::build(string output) {
 	populateMap();
-	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+    cout << gameMap.size() << endl;
+	// for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
 
-		GameState* curr = iter->second;
-		if(curr->visited || curr->target){
-            continue;
-        }
+	// 	GameState* curr = iter->second;
+	// 	if(curr->visited || curr->target){
+    //         continue;
+    //     }
 
-        createConnections(curr);
-        for(int i = 0; i < 4; ++i){
-            auto neighbor = curr->neighbors[i];
-        }
-	}
+    //     createConnections(curr);
+    //     for(int i = 0; i < 4; ++i){
+    //         auto neighbor = curr->neighbors[i];
+    //     }
+	// }
 
-    ofstream o;
-    o.open(output);
+    // ofstream o;
+    // o.open(output);
 
-    o << "Board Configuration:" << endl;
-
-    // this could probably be done in a more clever way
-    for(int i=0; i<length; i++) { 
-        for(int j=0; j<width; j++) {
-            o << configuration[i][j] << " ";
-        }
-        o << endl;
-    }
+    // o << "Board Configuration:" << endl;
+    // for(int i=0; i<length; i++) { 
+    //     for(int j=0; j<width; j++) {
+    //         o << configuration[i][j] << " ";
+    //     }
+    //     o << endl;
+    // }
     
-    o << endl << "Possible states:" << endl;
+    // o << endl << "Possible states:" << endl;
 
-    for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-    	GameState* curr = iter->second;
-    	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
-        curr->p1.second << "," << curr->p1.first << "; " <<
-        curr->p2.second << "," << curr->p2.first << endl;
+    // for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+    // 	GameState* curr = iter->second;
+    // 	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
+    //     curr->p1.second << "," << curr->p1.first << "; " <<
+    //     curr->p2.second << "," << curr->p2.first << endl;
 
-        o << curr->wolf.second << "," << curr->wolf.first << "; " <<
-        curr->p1.second << "," << curr->p1.first << "; " <<
-        curr->p2.second << "," << curr->p2.first << endl;
+    //     o << curr->wolf.second << "," << curr->wolf.first << "; " <<
+    //     curr->p1.second << "," << curr->p1.first << "; " <<
+    //     curr->p2.second << "," << curr->p2.first << endl;
 
-    	for(int i = 0; i < 4; ++i){
-      		auto neighbor = curr->neighbors[i];
-      		if(neighbor!=nullptr){
-                cout << moveTypes[i] << ":  ";
-        		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-          		neighbor->p2.second << "," << neighbor->p2.first << endl;
+    // 	for(int i = 0; i < 4; ++i){
+    //   		auto neighbor = curr->neighbors[i];
+    //   		if(neighbor!=nullptr){
+    //             cout << moveTypes[i] << ":  ";
+    //     		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+    //       		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+    //       		neighbor->p2.second << "," << neighbor->p2.first << endl;
 
-                o << moveTypes[i] << ":  ";
-        		o << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-          		neighbor->p2.second << "," << neighbor->p2.first << endl;
-      		}
-    	}
-        cout << endl;
-        o << endl;
-    }
-    o.close();
+    //             o << moveTypes[i] << ":  ";
+    //     		o << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+    //       		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+    //       		neighbor->p2.second << "," << neighbor->p2.first << endl;
+    //   		}
+    // 	}
+    //     // cout << endl;
+    //     o << endl;
+    // }
+    // o.close();
 }//EOF build
 
 
