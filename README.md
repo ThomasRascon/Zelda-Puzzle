@@ -7,8 +7,8 @@ ________________________________________________________________________________
 Rules of the puzzle:
 
 There are 3 pieces on a board that is a rectangualar grid, made of regular spaces, null 
-spaces, and 2 target spaces, which I'll elaborate on below. 
-The 3 pieces consist of a "wolf" piece, which is in reference to the source game,and 2 
+spaces, and 2 target spaces, which we elaborate on below. 
+The 3 pieces consist of a "wolf" piece, which is in reference to the source game, and 2 
 additional pieces (piece 1 and piece 2) that move depending on the most recent move of 
 the wolf piece. The goal of the puzzle is to get pieces 1 and 2 to occupy the target 
 spaces. Either piece may be in either target space, and the position of the wolf is 
