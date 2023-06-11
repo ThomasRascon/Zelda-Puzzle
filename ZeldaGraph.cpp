@@ -294,19 +294,18 @@ void GameGraph::createConnections(GameState* currentState) {
 
 void GameGraph::build(string output) {
 	populateMap();
-    cout << gameMap.size() << endl;
-	// for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
 
-	// 	GameState* curr = iter->second;
-	// 	if(curr->visited || curr->target){
-    //         continue;
-    //     }
+		GameState* curr = iter->second;
+		if(curr->visited || curr->target){
+            continue;
+        }
 
-    //     createConnections(curr);
-    //     for(int i = 0; i < 4; ++i){
-    //         auto neighbor = curr->neighbors[i];
-    //     }
-	// }
+        createConnections(curr);
+        for(int i = 0; i < 4; ++i){
+            auto neighbor = curr->neighbors[i];
+        }
+	}//EOF for
 
     // ofstream o;
     // o.open(output);
