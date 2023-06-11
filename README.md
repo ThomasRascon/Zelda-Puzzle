@@ -1,6 +1,6 @@
 These programs are a collection of tools for analyzing puzzles similar to a puzzle 
 found in The Legend of Zelda: Twilight Princess just before unlocking the master sword.
-Unfortunately, we aren't sure what this puzzle is called, so we colloquially refer to 
+Unfortunately, this puzzle was not given a name, so we colloquially refer to 
 it as "zelda puzzle".
 __________________________________________________________________________________________________
 
