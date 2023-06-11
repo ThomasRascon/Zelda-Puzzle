@@ -44,19 +44,23 @@ ________________________________________________________________________________
 Description of files/ folders:
 
 README.md             : You're reading this one now.   
-BoardReader.cpp       :
-SolutionDensity.cpp   : 
-ZeldaGraph.cpp        :   
-ZeldaGraph.hpp        :
-Helper.cpp            :
+BoardReader.cpp       : Contains two methods that convert files containing boards to data 
+                        that other functions can use, as well as an additional method that 
+                        randomly generates a board.
+SolutionDensity.cpp   : Contains a function that calculates the solution density of a board,
+                        and a main method that calls this function on a specified number 
+                        of boards, with specified dimensions. 
+                        We define solution density as the ratio between the number of win states 
+                        that are reachable from a different state, and the number of win states 
+                        that a board has. The goal of investigating this is to gain insight on 
+                        "strong nonsolution states", which is what we are calling win states that 
+                        are not reachable by a different state.
+ZeldaGraph.cpp & hpp  : Contain the various functions for analyzing possible states of boards  
+Helper.cpp            : Contains methods relevant to the logic of the puzzle, and converting 
+                        states to a unique ID.
 GraphTester.cpp       : Mainly used for testing new methods we're working on. At the moment,
                         it returns the solution desity of a single board, defined in 
-                        BoardConfigs. We define solution density as the ratio between the 
-                        number of win states that are reachable from a different state,
-                        and the number of win states that a board has. The goal of 
-                        investigating this is to gain insight on "strong nonsolution states",
-                        which is what we are calling win states that are not reachable by 
-                        a different state.
+                        BoardConfigs. 
 BoardConfigs          : Contains board configurations as text files, which are used in various 
                         programs. 1's represent regular spaces, 0's represent null spaces, and
                         2's represent target spaces.
