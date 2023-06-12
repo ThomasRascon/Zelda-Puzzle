@@ -307,47 +307,38 @@ void GameGraph::build(string output) {
         }
 	}//EOF for
 
-    // ofstream o;
-    // o.open(output);
+    ofstream o;
+    o.open(output);
 
-    // o << "Board Configuration:" << endl;
-    // for(int i=0; i<length; i++) { 
-    //     for(int j=0; j<width; j++) {
-    //         o << configuration[i][j] << " ";
-    //     }
-    //     o << endl;
-    // }
+    o << "Board Configuration:" << endl;
+    for(int i=0; i<length; i++) { 
+        for(int j=0; j<width; j++) {
+            o << configuration[i][j] << " ";
+        }
+        o << endl;
+    }
     
-    // o << endl << "Possible states:" << endl;
+    o << endl << "Connections:" << endl;
+    for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
+    	GameState* curr = iter->second;
 
-    // for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-    // 	GameState* curr = iter->second;
-    // 	cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
-    //     curr->p1.second << "," << curr->p1.first << "; " <<
-    //     curr->p2.second << "," << curr->p2.first << endl;
+        o << curr->wolf.second << "," << curr->wolf.first << "; " <<
+        curr->p1.second << "," << curr->p1.first << "; " <<
+        curr->p2.second << "," << curr->p2.first << endl;
 
-    //     o << curr->wolf.second << "," << curr->wolf.first << "; " <<
-    //     curr->p1.second << "," << curr->p1.first << "; " <<
-    //     curr->p2.second << "," << curr->p2.first << endl;
+    	for(int i = 0; i < 4; ++i){
+      		auto neighbor = curr->neighbors[i];
+      		if(neighbor!=nullptr){
 
-    // 	for(int i = 0; i < 4; ++i){
-    //   		auto neighbor = curr->neighbors[i];
-    //   		if(neighbor!=nullptr){
-    //             cout << moveTypes[i] << ":  ";
-    //     		cout << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-    //       		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-    //       		neighbor->p2.second << "," << neighbor->p2.first << endl;
-
-    //             o << moveTypes[i] << ":  ";
-    //     		o << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-    //       		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-    //       		neighbor->p2.second << "," << neighbor->p2.first << endl;
-    //   		}
-    // 	}
-    //     // cout << endl;
-    //     o << endl;
-    // }
-    // o.close();
+                o << moveTypes[i] << ":  ";
+        		o << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
+          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
+          		neighbor->p2.second << "," << neighbor->p2.first << endl;
+      		}
+    	}
+        o << endl;
+    }
+    o.close();
 }//EOF build
 
 
