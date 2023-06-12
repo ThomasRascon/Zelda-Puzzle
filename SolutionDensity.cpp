@@ -7,17 +7,6 @@ using namespace std;
 
 double SolutionDensity(vector<vector<int>> board){
 
-    cout << board.size() << endl;
-    cout << board[0].size() << endl;
-    cout << endl << "Board:"<< endl;
-    for(int row = 0; row < board.size(); ++row){
-        for(int col = 0; col < board[0].size(); ++col){
-            cout << board[row][col] << " ";
-        }
-        cout << endl;
-    }
-    cout << endl;
-
     GameGraph* graph = new GameGraph(board);
     graph->build("output.txt");
     auto targets = findTargets(board);

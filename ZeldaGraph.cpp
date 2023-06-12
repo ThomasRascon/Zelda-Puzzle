@@ -297,7 +297,6 @@ void GameGraph::createConnections(GameState* currentState) {
 
 void GameGraph::build(string output) {
 	populateMap();
-    cout << gameMap.size() << endl;
 	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
 
 		GameState* curr = iter->second;

@@ -70,7 +70,7 @@ vector<vector<int>> randomBoard(int width, int height, double density) {
         }
     }
 
-    if(numSpaces < 2){
+    if(numSpaces < 3){
         board[0][0] = 2;
         board[0][1] = 2;
         return board;
@@ -79,8 +79,14 @@ vector<vector<int>> randomBoard(int width, int height, double density) {
     auto it = spaces.begin();
     advance(it, rand() % spaces.size());
     board[*it/width][*it%width] = 2;
+    // cout << *it/width << " " << *it%width << endl << 
+    //         spaces.size() << endl;
     spaces.erase(it);
+    it = spaces.begin();
+    //cout << spaces.size() << endl;
     advance(it, rand() % spaces.size());
+    // cout << *it/width << " " << *it%width << endl << 
+    //         spaces.size() << endl;
     board[*it/width][*it%width] = 2;
 
     return board;
