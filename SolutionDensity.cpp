@@ -39,11 +39,9 @@ double SolutionDensity(vector<vector<int>> board){
         totalFinalStates += 2;
     }//EOF wolf loop
 
-    if(totalFinalStates==0) {
-        totalFinalStates=1;
+    if(totalFinalStates==0){
+        return 0;
     }
 
     return (double)numVisited/totalFinalStates;
 }//EOF solutionDensity
-
-
