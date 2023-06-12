@@ -62,7 +62,7 @@ int main(int argc, char* argv[]){
             cout << endl;
 
             tempDensity = SolutionDensity(board);
-            average += tempDensity
+            average += tempDensity;
 
             t = time(0)-t;
             cout << "Space Density: " << density << endl
