@@ -20,12 +20,12 @@ int main(int argc, char* argv[]){
     double density;
 
 
-    int t = time(0);
+    int t = time(0);    
 
-    srand(time(0));
+    srand(1);
 
     if(argc != 6){
-        cout << "Please specify a width, height, step size, sample size, and output file name." << endl;
+        cout << "Please specify a width, height, sample size, step size, and output file name." << endl;
         exit(1);
     }
     try{
@@ -60,7 +60,11 @@ int main(int argc, char* argv[]){
             cout << endl;
 
             average += SolutionDensity(board);
-            cout << stepIter << " " << sampleIter << " " << time(0)-t << endl;
+
+            t = time(0)-t;
+            cout << "Space Density: " << density << endl
+                 << "Sample number: " << sampleIter << endl 
+                 << "Time to calculate: " << t/60 << ":" << t%60 << endl;
             t = time(0);
             
         }
