@@ -1,6 +1,7 @@
-// TODO: Program stops abruptly for larger boards.
-//       For 10 by 10, it stops in the early 6's, 
-//       and for 15 by 15, it stops in the early 5's.
+// TODO: run for large board, large space density, small samp size
+//       run for large board, low space density, large samp
+//       formatting console output
+//       generate data for various moderate board sizes for large samp size to graph
 
 #include <ctime>
 #include <fstream>
@@ -20,6 +21,7 @@ int main(int argc, char* argv[]){
     double density;
 
 
+    double tempDensity;
     int t = time(0);    
 
     srand(1);
@@ -42,11 +44,11 @@ int main(int argc, char* argv[]){
     ofstream o;
     o.open("OutputFiles/"+outputFile);
 
-    for(int stepIter=0; stepIter<floor(1./stepSize); stepIter++){  
+    for(int stepIter=0; stepIter<4; stepIter++){  
         density = stepIter*stepSize;
         average = 0;
-        //cout << stepIter << " " << floor(1./stepSize) << endl;
-        for(int sampleIter=0; sampleIter<sampleSize; sampleIter++){
+
+        for(int sampleIter=1; sampleIter<=sampleSize; sampleIter++){
         
             vector<vector<int>> board = randomBoard(width, height, density);
 
@@ -59,11 +61,13 @@ int main(int argc, char* argv[]){
             }
             cout << endl;
 
-            average += SolutionDensity(board);
+            tempDensity = SolutionDensity(board);
+            average += tempDensity
 
             t = time(0)-t;
             cout << "Space Density: " << density << endl
-                 << "Sample number: " << sampleIter << endl 
+                 << "Sample number: " << sampleIter << endl
+                 << "Solution Density: " << tempDensity << endl
                  << "Time to calculate: " << t/60 << ":" << t%60 << endl;
             t = time(0);
             
