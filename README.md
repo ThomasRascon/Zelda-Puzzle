@@ -1,3 +1,5 @@
+! TODO: Add latex based graphics
+
 These programs are a collection of tools for analyzing puzzles similar to a puzzle 
 found in The Legend of Zelda: Twilight Princess just before unlocking the master sword.
 Unfortunately, this puzzle was not given a name, so we colloquially refer to 
@@ -43,30 +45,30 @@ ________________________________________________________________________________
 
 Description of files/ folders:
 
-README.md             : You're reading this one now.   
-BoardReader.cpp       : Contains two methods that convert files containing boards to data 
-                        that other functions can use, as well as an additional method that 
-                        randomly generates a board.
-SolutionDensity.cpp   : Contains a function that calculates the solution density of a board,
-                        and a main method that calls this function on a specified number 
-                        of boards, with specified dimensions. 
-                        We define solution density as the ratio between the number of win states 
-                        that are reachable from a different state, and the number of win states 
-                        that a board has. The goal of investigating this is to gain insight on 
-                        "strong nonsolution states", which is what we are calling win states that 
-                        are not reachable by a different state.
-ZeldaGraph.cpp & hpp  : Contain the various functions for analyzing possible states of boards  
-Helper.cpp            : Contains methods relevant to the logic of the puzzle, and converting 
-                        states to a unique ID.
-GraphTester.cpp       : Mainly used for testing new methods we're working on. At the moment,
-                        it returns the solution desity of a single board, defined in 
-                        BoardConfigs. 
-BoardConfigs          : Contains board configurations as text files, which are used in various 
-                        programs. 1's represent regular spaces, 0's represent null spaces, and
-                        2's represent target spaces.
-OutputFiles           : Contains text files that are output by the build method in 
-                        ZeldaGraph.cpp. These the board configuration passed to build, all 
-                        possible states of said board, as well as what states they connect to 
-                        within 1 movement.
+README.md             : You're reading this one now.   \
+BoardReader.cpp       : Contains two methods that convert files containing boards to data \
+                        that other functions can use, as well as an additional method that \
+                        randomly generates a board.\
+SolutionDensity.cpp   : Contains a function that calculates the solution density of a board,\
+                        and a main method that calls this function on a specified number \
+                        of boards, with specified dimensions. \
+                        We define solution density as the ratio between the number of win states \
+                        that are reachable from a different state, and the number of win states \
+                        that a board has. The goal of investigating this is to gain insight on \
+                        "strong nonsolution states", which is what we are calling win states that \
+                        are not reachable by a different state.\
+ZeldaGraph.cpp & hpp  : Contain the various functions for analyzing possible states of boards  \
+Helper.cpp            : Contains methods relevant to the logic of the puzzle, and converting \
+                        states to a unique ID.\
+GraphTester.cpp       : Mainly used for testing new methods we're working on. At the moment,\
+                        it returns the solution desity of a single board, defined in \
+                        BoardConfigs. \
+BoardConfigs          : Contains board configurations as text files, which are used in various \
+                        programs. 1's represent regular spaces, 0's represent null spaces, and\
+                        2's represent target spaces.\
+OutputFiles           : Contains text files that are output by the build method in \
+                        ZeldaGraph.cpp. These the board configuration passed to build, all \
+                        possible states of said board, as well as what states they connect to \
+                        within 1 movement.\
 
         
