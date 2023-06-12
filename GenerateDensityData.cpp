@@ -59,10 +59,7 @@ int main(int argc, char* argv[]){
             }
             cout << endl;
 
-
             average += SolutionDensity(board);
-
-            
             cout << stepIter << " " << sampleIter << " " << time(0)-t << endl;
             t = time(0);
             

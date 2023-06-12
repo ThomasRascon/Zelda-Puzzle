@@ -263,6 +263,9 @@ pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
 
 void GameGraph::createConnections(GameState* currentState) {
 
+    // cout << currentState->wolf.second << "," << currentState->wolf.first << "; " <<
+    // currentState->p1.second << "," << currentState->p1.first << "; " <<
+    // currentState->p2.second << "," << currentState->p2.first << endl;
     currentState->visited = true;
     if(currentState->target){
         return;
@@ -280,9 +283,9 @@ void GameGraph::createConnections(GameState* currentState) {
         auto neighborID = generateID(currentState, move);        //identifier of the neighbor
         GameState* neighbor = gameMap.find(neighborID)->second;  //search the gameMap for the neighbor
         
-        //if the neighbor has not been visited yet and is not a target state...
+        //if the neighbor has not been visited yet...
         if(!neighbor->visited){
-            createConnections(neighbor);	//recurrsively call createConnections on the new neighbor
+            createConnections(neighbor);	//recurrsively call createConnections on the neighbor
         }
         
         currentState->moves[i] = true;            //Since the move is valid
@@ -294,6 +297,7 @@ void GameGraph::createConnections(GameState* currentState) {
 
 void GameGraph::build(string output) {
 	populateMap();
+    cout << gameMap.size() << endl;
 	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
 
 		GameState* curr = iter->second;
