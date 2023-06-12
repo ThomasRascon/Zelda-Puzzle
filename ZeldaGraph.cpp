@@ -346,7 +346,7 @@ void GameGraph::build(string output) {
 
 
 GameGraph::~GameGraph(){
-    for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
-        delete iter->second;
+    for(auto const& entry : gameMap){
+        delete entry.second;
     }
 }//EOF deallocator

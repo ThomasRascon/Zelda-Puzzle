@@ -39,6 +39,8 @@ double SolutionDensity(vector<vector<int>> board){
         totalFinalStates += 2;
     }//EOF wolf loop
 
+    delete graph;
+
     if(totalFinalStates==0){
         return 0;
     }
