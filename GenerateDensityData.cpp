@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
     ofstream o;
     o.open("OutputFiles/"+outputFile);
 
-    for(int stepIter=0; stepIter<4; stepIter++){  
+    for(int stepIter=0; stepIter<floor(1/stepSize); stepIter++){  
         density = stepIter*stepSize;
         average = 0;
 

@@ -5,21 +5,18 @@
 
 using namespace std;
 
+
 //Declare the array of move types
 const char moveTypes[4] = {'U','D','L','R'};
 
-// functions from ZeldaGraph.hpp
-void populateMap();
-bool validMove(GameState* currentState, char move);
-int generateID(GameState* currentState, char move);
-GameState* createState(int ID);
 
-
-GameGraph::GameGraph(vector<vector<int>> configuration) {
-
+GameGraph::GameGraph(vector<vector<int>> configuration)
+    : configuration(configuration)
+{
     this->length = configuration.size();
     this->width = configuration[0].size();
-    this->configuration = configuration;
+    int numOnSolution = 0;
+    int mapSize = 0;
 
     auto targets = findTargets(configuration);
     this->target_1 = targets.first;
@@ -27,13 +24,25 @@ GameGraph::GameGraph(vector<vector<int>> configuration) {
 }//EOF GameGraph constructor
 
 
-GameState* GameGraph::getGameState(pair<int,int> ID) {
-    auto iter = gameMap.find(ID);
-    if(iter == gameMap.end()){
-        return nullptr;
+void GameGraph::countOnTarget(GameState* currentState) {
+    currentState->onSolution = true;
+    numOnSoln++;
+    for(auto parent : currentState->parents){
+        if(!parent->onSolution){
+            countOnTarget(parent);
+        }
     }
-    return iter->second;
-}
+}//EOF countOnTarget
+
+
+int GameGraph::getNumOnSoln() {
+    return numOnSoln;
+}//EOF getNumOnSoln
+
+
+int GameGraph::mapSize() {
+    return gameMap.size();
+}//EOF mapSize
 
 
 GameState* GameGraph::createState(pair<int,int> ID, bool target) {
@@ -110,162 +119,7 @@ void GameGraph::populateMap() {
 }//EOF populateMap
 
 
-bool GameGraph::validMove(GameState* currentState, char move) {
-
-    int wolf_x = currentState->wolf.first;
-    int wolf_y = currentState->wolf.second;
-    int p1_x = currentState->p1.first;
-    int p1_y = currentState->p1.second;
-    int p2_x = currentState->p2.first;
-    int p2_y = currentState->p2.second;
-    
-    if(move=='U'){
-        
-        //Check if the wolf will fall off the border of the map
-        if(wolf_y == 0){
-            return false;
-        }
-        //Check if the wolf is moving onto a nonspace
-        if(configuration[wolf_y-1][wolf_x] == 0){
-            return false;
-        }
-        //Make sure no collisions occur
-        if((wolf_y-1 == p1_y && wolf_x == p1_x) || (wolf_y-1 == p2_y && wolf_x == p2_x)){
-            return false;
-        }  
-        //Make sure p2 doesn't crush the wolf
-        if(wolf_x == p2_x && wolf_y-1 == p2_y+1){
-            return false;
-        }
-
-    }//EOF Up case
-    
-    else if(move=='D'){
-        
-        //Check if the wolf will fall off the border of the map
-        if(wolf_y == length-1){
-            return false;
-        }
-        //Check if the wolf is moving onto a nonspace
-        if(configuration[wolf_y+1][wolf_x] == 0){
-            return false;
-        }
-        //Make sure no collisions occur
-        if((wolf_y+1 == p1_y && wolf_x == p1_x) || (wolf_y+1 == p2_y && wolf_x == p2_x)){
-            return false;
-        }
-        //Make sure p2 doesn't crush the wolf
-        if(wolf_x == p2_x && wolf_y+1 == p2_y-1){
-            return false;
-        }
-
-    }//EOF Down case
-    
-    else if(move=='L'){
-        
-        //Check if the wolf will fall off the border of the map
-        if(wolf_x == 0){
-            return false;
-        }
-        //Check if the wolf is moving onto an internal nonspace
-        if(configuration[wolf_y][wolf_x-1] == 0){
-            return false;
-        }
-        //Make sure no collisions occur
-        if((wolf_x-1 == p1_x && wolf_y == p1_y) || (wolf_x-1 == p2_x && wolf_y == p2_y)){
-            return false;
-        }
-        //Make sure p2 doesn't crush the wolf
-        if(wolf_y == p2_y && wolf_x-1 == p2_x+1){
-            return false;
-        }
-    }//EOF Left case
-    
-    else{
-        
-        //Check if the wolf will fall off the border of the map
-        if(wolf_x == width-1){
-            return false;
-        }
-        //Check if the wolf is moving onto a nonspace
-        if(configuration[wolf_y][wolf_x+1] == 0){
-            return false;
-        } 
-        //Make sure no collisions occur
-        if((wolf_x+1 == p1_x && wolf_y == p1_y) || (wolf_x+1 == p2_x && wolf_y == p2_y)){
-            return false;
-        }
-        //Make sure p2 doesn't crush the wolf
-        if(wolf_y == p2_y && wolf_x+1 == p2_x-1){
-            return false;
-        }
-    }//EOF Right case
-    
-    //if all cases pass, the move is valid
-    return true;
-  
-}//EOF validMove method
-
-      
-pair<int,int> GameGraph::generateID(GameState* currentState, char move) {
-    pair<int,int> wolf = currentState->wolf;
-    pair<int,int> p1 = currentState->p1;
-    pair<int,int> p2 = currentState->p2;
-    array<bool, 2> canMove;
-    
-    if(move=='U'){
-        --wolf.second;      //Moves the wolf up
-        canMove = upCollision(wolf, p1, p2, configuration, length, width);
-        if(canMove[0]){
-            --p1.second;    //Moves p1 up
-        }
-        if(canMove[1]){
-            ++p2.second;    //Moves p2 down
-        }
-    }//EOF Up case
-  
-    else if(move=='D'){
-        ++wolf.second;      //Moves the wolf down
-        canMove = downCollision(wolf, p1, p2, configuration, length, width);
-        if(canMove[0]){
-            ++p1.second;    //Moves p1 down
-        }
-        if(canMove[1]){
-            --p2.second;    //Moves p2 up
-        }
-    }//EOF Down case
-  
-    else if(move=='L'){
-        --wolf.first;       //Moves the wolf left
-        canMove = leftCollision(wolf, p1, p2, configuration, length, width);
-        if(canMove[0]){
-            --p1.first;     //Moves p1 left
-        }
-        if(canMove[1]){
-            ++p2.first;     //Moves p2 right
-        }
-    }//EOF Left case
-  
-    else{
-        ++wolf.first;       //Moves the wolf right
-        canMove = rightCollision(wolf, p1, p2, configuration, length, width);
-        if(canMove[0]){
-            ++p1.first;     //Moves p1 right
-        }
-        if(canMove[1]){
-            --p2.first;     //Moves p2 left
-        }
-    }//EOF Right case
-	
-    return pairsToID(wolf, p1, p2);
-}//EOF generateID method
-
-
 void GameGraph::createConnections(GameState* currentState) {
-
-    // cout << currentState->wolf.second << "," << currentState->wolf.first << "; " <<
-    // currentState->p1.second << "," << currentState->p1.first << "; " <<
-    // currentState->p2.second << "," << currentState->p2.first << endl;
     currentState->visited = true;
     if(currentState->target){
         return;
@@ -276,12 +130,13 @@ void GameGraph::createConnections(GameState* currentState) {
         char move = moveTypes[i];
 
         //if the move is not valid...
-        if(!validMove(currentState, move)){
+        if(!validMove(configuration, currentState, move)){
             continue;
         }
             
-        auto neighborID = generateID(currentState, move);        //identifier of the neighbor
+        auto neighborID = generateID(configuration, currentState, move);        //identifier of the neighbor
         GameState* neighbor = gameMap.find(neighborID)->second;  //search the gameMap for the neighbor
+        neighbor->parents.push_back(currentState);
         
         //if the neighbor has not been visited yet...
         if(!neighbor->visited){
@@ -295,53 +150,36 @@ void GameGraph::createConnections(GameState* currentState) {
 }//EOF createConnections method
 
 
-void GameGraph::build(string output) {
-	populateMap();
-	for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter){
+void GameGraph::findTargetStates() {
+    for(int wolfIter = 0; wolfIter < width*length; ++wolfIter){
 
-		GameState* curr = iter->second;
-		if(curr->visited || curr->target){
+        int wolf_x = wolfIter % width;
+        int wolf_y = wolfIter / width;
+
+        if(configuration[wolf_y][wolf_x] == 2 || configuration[wolf_y][wolf_x] == 0){
             continue;
         }
 
+        pair<int,int> wolf = {wolf_x, wolf_y};
+        pair<int,int> ID_1 = pairsToID(wolf, target_1, target_2);
+        pair<int,int> ID_2 = pairsToID(wolf, target_2, target_1);
+        targetStates.push_back(gameMap.find(ID_1)->second);
+        targetStates.push_back(gameMap.find(ID_2)->second);
+        
+    }//EOF wolf loop
+}//EOF findTargetStates
+
+
+void GameGraph::build(string output) {
+	populateMap();
+	for(auto pair : gameMap){
+		GameState* curr = pair.second;
+		if(curr->visited || curr->target){
+            continue;
+        }
         createConnections(curr);
-        for(int i = 0; i < 4; ++i){
-            auto neighbor = curr->neighbors[i];
-        }
 	}//EOF for
-
-    ofstream o;
-    o.open(output);
-
-    o << "Board Configuration:" << endl;
-    for(int i=0; i<length; i++) { 
-        for(int j=0; j<width; j++) {
-            o << configuration[i][j] << " ";
-        }
-        o << endl;
-    }
-    
-    o << endl << "Connections:" << endl;
-    for(auto iter = gameMap.begin(); iter != gameMap.end(); ++iter) {
-    	GameState* curr = iter->second;
-
-        o << curr->wolf.second << "," << curr->wolf.first << "; " <<
-        curr->p1.second << "," << curr->p1.first << "; " <<
-        curr->p2.second << "," << curr->p2.first << endl;
-
-    	for(int i = 0; i < 4; ++i){
-      		auto neighbor = curr->neighbors[i];
-      		if(neighbor!=nullptr){
-
-                o << moveTypes[i] << ":  ";
-        		o << "\t" << neighbor->wolf.second << "," << neighbor->wolf.first << "; " <<
-          		neighbor->p1.second << "," << neighbor->p1.first << "; " <<
-          		neighbor->p2.second << "," << neighbor->p2.first << endl;
-      		}
-    	}
-        o << endl;
-    }
-    o.close();
+    findTargetStates();
 }//EOF build
 
 
@@ -349,4 +187,4 @@ GameGraph::~GameGraph(){
     for(auto const& entry : gameMap){
         delete entry.second;
     }
-}//EOF deallocator
+}//EOF destructor

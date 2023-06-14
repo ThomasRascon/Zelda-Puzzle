@@ -26,7 +26,7 @@ struct GameState {
   pair<int,int> wolf;
   bool visited;
   bool target;
-  bool onSolution;  //if you can get from this state to a target state
+  bool onSolution;    //if you can get from this state to a target state
   bool moves[4]{};    //all possible movements from current state (order: Up, Down, Left, Right)
   GameState* neighbors[4]{};  // possible neighbors, corresponds to validMoves (nullptr if invalid)
   list<GameState*> parents; //list of all states connecting to this state
@@ -46,14 +46,14 @@ class GameGraph {
     // dimensions of configuration
     int length;
     int width;
-    //positions are the target spaces
+    int numOnSoln;
     pair<int,int> target_1;
     pair<int,int> target_2;
-    vector<vector<int>> configuration; // board configuration
-    GameState* initalState;
+    const vector<vector<int>> configuration; // board configuration
     unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
       
   public:
+    list<GameState*> targetStates;
   
     /**
      * GameGraph constructor
@@ -61,11 +61,13 @@ class GameGraph {
     GameGraph(vector<vector<int>> configuration);
 
     /**
-     * GameGraph deallocator
+     * GameGraph destructor
      */
     ~GameGraph();
 
-    GameState* getGameState(pair<int,int> ID);
+    int getNumOnSoln();
+
+    int mapSize();
   
     void populateMap();
 
@@ -76,16 +78,10 @@ class GameGraph {
       // if possible move has not been visited, run GenerateNeighbors on it
     // NOTE: This seems to also be defined in ZeldaGraph.cpp
     void createConnections(GameState* currentState);
+
+    void countOnTarget(GameState* currentState);
   
-    // uses configuration, which is a global variable and game rules to return whether
-    // you can go from CurrentState to direction up, down, left, or right, specified 
-    // by u, d, l, r
-    bool validMove(GameState* currentState, char move);
-  
-    /**
-     * Takes in the current state and the move you wish to make and creates the ID of the next state
-     */
-    pair<int,int> generateID(GameState* currentState, char move);
+    void findTargetStates();
   
     /**
      * Takes in the unique identifier of a state and creates it
