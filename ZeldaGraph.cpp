@@ -15,8 +15,7 @@ GameGraph::GameGraph(vector<vector<int>> configuration)
 {
     this->length = configuration.size();
     this->width = configuration[0].size();
-    int numOnSolution = 0;
-    int mapSize = 0;
+    this->numOnSoln = 0;
 
     auto targets = findTargets(configuration);
     this->target_1 = targets.first;
