@@ -8,7 +8,7 @@ using namespace std;
 double solutionness(vector<vector<int>> board){
 
     GameGraph* graph = new GameGraph(board);
-    graph->build("output.txt");
+    graph->build();
     double solutionRatio = 0;
 
     for(auto& target : graph->targetStates){
