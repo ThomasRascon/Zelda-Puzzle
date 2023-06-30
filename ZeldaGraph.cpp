@@ -169,7 +169,7 @@ void GameGraph::findTargetStates() {
 }//EOF findTargetStates
 
 
-void GameGraph::build(string output) {
+void GameGraph::build() {
 	populateMap();
 	for(auto pair : gameMap){
 		GameState* curr = pair.second;
