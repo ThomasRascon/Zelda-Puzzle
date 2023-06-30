@@ -1,10 +1,11 @@
-#include "SolutionDensity.cpp"
+#include "Solutionness.cpp"
 
 using namespace std;
 
 int main() {
-
-    vector<vector<int>> board = readBoard("BoardConfigs/board1.txt");
-    cout << "Density:" << SolutionDensity(board) << endl;
-    cout << "Ended successfuly";
+    auto info = readBoard("BoardConfigs/board1.txt");
+    vector<vector<int>> board = info.first;
+    vector<int> cords = info.second;
+    std::cout << "Solutionness:" << solutionness(board) << endl;
+    std::cout << "Ended successfuly";
 }

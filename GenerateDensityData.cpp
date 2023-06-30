@@ -2,6 +2,7 @@
 //       run for large board, low space density, large samp
 //       formatting console output
 //       generate data for various moderate board sizes for large samp size to graph
+//       Stop when space density hits 1 and return 1
 
 #include <ctime>
 #include <fstream>
@@ -19,7 +20,6 @@ int main(int argc, char* argv[]){
     // values output to file
     double average;
     double density;
-
 
     double tempDensity;
     int t = time(0);    

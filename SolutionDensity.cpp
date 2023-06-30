@@ -8,7 +8,7 @@ using namespace std;
 double SolutionDensity(vector<vector<int>> board){
 
     GameGraph* graph = new GameGraph(board);
-    graph->build("output.txt");
+    graph->build();
     int totalFinalStates = 0;
     int numVisited = 0;
 
