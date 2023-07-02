@@ -17,6 +17,16 @@ pair<int,int> pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2)
 }//EOF pairToID
 
 
+bool insideOfRange(GameState* currentState, const vector<int>& coords) {
+    return currentState->wolf.first >= coords[0] && currentState->wolf.first <= coords[1] &&
+           currentState->wolf.second >= coords[2] && currentState->wolf.second <= coords[3] &&
+           currentState->p1.first >= coords[4] && currentState->p1.first <= coords[5] &&
+           currentState->p1.second >= coords[6] && currentState->p1.second <= coords[7] &&
+           currentState->p2.first >= coords[8] && currentState->p2.first <= coords[9] &&
+           currentState->p2.second >= coords[10] && currentState->p2.second <= coords[11];
+}//EOF insideOfRange
+
+
 array<bool, 2> upCollision(pair<int,int> wolf,  pair<int,int> p1, pair<int,int> p2,
     const vector<vector<int>>& board, int length, int width)
 {

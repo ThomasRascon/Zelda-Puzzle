@@ -10,12 +10,13 @@ using namespace std;
 const char moveTypes[4] = {'U','D','L','R'};
 
 
-GameGraph::GameGraph(vector<vector<int>> configuration)
-    : configuration(configuration)
+GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords) 
+    : configuration(configuration), coords(coords)
 {
     this->length = configuration.size();
     this->width = configuration[0].size();
-    this->numOnSoln = 0;
+    this->numSolvableStarts = 0;
+    this->numStartStates = 0;
 
     auto targets = findTargets(configuration);
     this->target_1 = targets.first;
@@ -25,7 +26,9 @@ GameGraph::GameGraph(vector<vector<int>> configuration)
 
 void GameGraph::countOnTarget(GameState* currentState) {
     currentState->onSolution = true;
-    numOnSoln++;
+    if(!currentState->target && insideOfRange(currentState, this->coords)){
+        this->numSolvableStarts++;
+    }
     for(auto parent : currentState->parents){
         if(!parent->onSolution){
             countOnTarget(parent);
@@ -34,14 +37,14 @@ void GameGraph::countOnTarget(GameState* currentState) {
 }//EOF countOnTarget
 
 
-int GameGraph::getNumOnSoln() {
-    return numOnSoln;
-}//EOF getNumOnSoln
+int GameGraph::getNumSolvableStarts() {
+    return this->numSolvableStarts;
+}//EOF getNumSolvableStarts
 
 
-int GameGraph::mapSize() {
-    return gameMap.size();
-}//EOF mapSize
+int GameGraph::getNumStartStates() {
+    return this->numStartStates;
+}//EOF getNumStartStates
 
 
 GameState* GameGraph::createState(pair<int,int> ID, bool target) {
@@ -123,6 +126,10 @@ void GameGraph::createConnections(GameState* currentState) {
     if(currentState->target){
         return;
     }
+
+    if(insideOfRange(currentState, this->coords)){
+        this->numStartStates++;
+    }
     
     for(int i = 0; i < 4; ++i){  
 
@@ -173,7 +180,7 @@ void GameGraph::build() {
 	populateMap();
 	for(auto pair : gameMap){
 		GameState* curr = pair.second;
-		if(curr->visited || curr->target){
+		if(curr->visited || curr->target || !insideOfRange(curr, coords)){
             continue;
         }
         createConnections(curr);

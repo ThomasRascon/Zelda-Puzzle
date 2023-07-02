@@ -46,9 +46,11 @@ class GameGraph {
     // dimensions of configuration
     int length;
     int width;
-    int numOnSoln;
+    int numStartStates;
+    int numSolvableStarts;
     pair<int,int> target_1;
     pair<int,int> target_2;
+    const vector<int> coords;
     const vector<vector<int>> configuration; // board configuration
     unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
       
@@ -58,14 +60,16 @@ class GameGraph {
     /**
      * GameGraph constructor
      */
-    GameGraph(vector<vector<int>> configuration);
+    GameGraph(vector<vector<int>> configuration, vector<int> coords);
 
     /**
      * GameGraph destructor
      */
     ~GameGraph();
 
-    int getNumOnSoln();
+    int getNumSolvableStarts();
+
+    int getNumStartStates();
 
     int mapSize();
   

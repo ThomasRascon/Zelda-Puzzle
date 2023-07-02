@@ -3,7 +3,6 @@
 #include <sstream>
 #include <vector>
 #include <random>
-#include <algorithm>
 #include <cctype>
 #include <unordered_set>
 
@@ -13,11 +12,11 @@ using namespace std;
 void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
     for(int i = 0; i < array.size(); ++i){
         if(i%4==1 && array[i] > x_limit){
-            std::cerr << "Invalid range out of bounds." << endl;
+            cerr << "Invalid range out of bounds." << endl;
             exit(1);
         }
         if(i%4==3 && array[i] > y_limit){
-            std::cerr << "Invalid range out of bounds." << endl;
+            cerr << "Invalid range out of bounds." << endl;
             exit(1);
         }
         if(array[i]>=0){
@@ -26,14 +25,14 @@ void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
         if(i%4 == 3){
             array[i] = y_limit;
             if(array[i]<array[i-1]){
-                std::cerr << "Invalid ranges." << endl;
+                cerr << "Invalid ranges." << endl;
                 exit(1);
             }
         }
         else if(i%4 == 1){
             array[i] = x_limit;
             if(array[i]<array[i-1]){
-                std::cerr << "Invalid ranges." << endl;
+                cerr << "Invalid ranges." << endl;
                 exit(1);
             }
         }
@@ -52,14 +51,14 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
     vector<int> array(12, -1);
     bool matrixComplete = false;
 
-    while(std::getline(file, line)) {
+    while(getline(file, line)) {
         if(line.empty() || line[0] == '(') {
             matrixComplete = true;
         }
 
-        std::istringstream iss(line);
+        istringstream iss(line);
         if(!matrixComplete){
-            std::vector<int> row;
+            vector<int> row;
             int value;
             while (iss >> value) {
                 row.push_back(value);
@@ -73,14 +72,9 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
             string numString = "";
             index += (4-(index%4))%4;
             while(iss.get(c)){
-                for(int entry : array){
-                    std::cout << entry << " ";
-                }
-                std::cout << endl;
-                std::cout << c << endl;
                 if(c==':' || c==',' || c==')'){
                     if(numString==""){
-                        std::cerr << "Invalid ranges." << endl;
+                        cerr << "Invalid ranges." << endl;
                         exit(1);
                     }
                     array[index] = stoi(numString);
@@ -92,7 +86,7 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
                     continue;
                 }
                 else if(!isdigit(c)){
-                    std::cerr << "Invalid character" << endl;
+                    cerr << "Invalid character" << endl;
                     exit(1);
                 }
                 else{
@@ -100,26 +94,9 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
                 }
             }
         }
-        std::cout << endl;
     }
 
     adjustCoordinates(array, matrix[0].size()-1, matrix.size()-1);
-
-    // Print the matrix
-    std::cout << "Matrix:" << endl;
-    for (const auto& row : matrix) {
-        for (const auto& value : row) {
-            std::cout << value << ' ';
-        }
-        std::cout << endl;
-    }
-
-    // Print the array
-    std::cout << "Array: ";
-    for (const auto& value : array) {
-        std::cout << value << ' ';
-    }
-    std::cout << endl;
 
     return {matrix, array};
 }//EOF readBoard
@@ -140,7 +117,7 @@ pair<pair<int,int>, pair<int,int>> findTargets(vector<vector<int>> board) {
     }
 
     if(cords.size() != 4){
-        std::cout << "Please enter the targets." << endl;
+        cerr << "Please enter the targets." << endl;
         exit(1);
     }
 
@@ -174,11 +151,11 @@ vector<vector<int>> randomBoard(int width, int height, double density) {
     }
 
     auto it = spaces.begin();
-    std::advance(it, rand() % spaces.size());
+    advance(it, rand() % spaces.size());
     board[*it/width][*it%width] = 2;
     spaces.erase(it);
     it = spaces.begin();
-    std::advance(it, rand() % spaces.size());
+    advance(it, rand() % spaces.size());
     board[*it/width][*it%width] = 2;
 
     return board;

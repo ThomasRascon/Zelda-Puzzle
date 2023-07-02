@@ -1,3 +1,5 @@
+//TODO: varify for small cases and statistically varify for large cases
+
 #include "ZeldaGraph.hpp"
 #include "ZeldaGraph.cpp"
 #include "Helper.cpp"
@@ -5,22 +7,19 @@
 using namespace std;
 
 
-double solutionness(vector<vector<int>> board){
+double solutionness(vector<vector<int>> board, vector<int> cords){
 
-    GameGraph* graph = new GameGraph(board);
+    GameGraph* graph = new GameGraph(board, cords);
     graph->build();
     double solutionRatio = 0;
 
-    for(auto& target : graph->targetStates){
+    for(const auto& target : graph->targetStates){
         graph->countOnTarget(target);
     }
 
+    solutionRatio = (double)graph->getNumSolvableStarts() / graph->getNumStartStates();
 
-    solutionRatio = (double)graph->getNumOnSoln() / graph->mapSize();
-
-    cout << endl << "NumOnSoln: " << graph->getNumOnSoln() << endl 
-         << "mapSize: " << graph->mapSize() << endl;
-    if(graph->mapSize()==0){
+    if(graph->getNumStartStates()==0){
         solutionRatio = 0;
     }
 
