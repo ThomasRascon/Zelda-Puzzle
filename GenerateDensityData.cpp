@@ -2,32 +2,34 @@
 //       run for large board, low space density, large samp
 //       formatting console output
 //       generate data for various moderate board sizes for large samp size to graph
-//       Stop when space density hits 1 and return 1
-
+//       plot all solution densities as a scatter plot/ heat map
+//       rewrite for solutionness
 #include <ctime>
 #include <fstream>
 #include "SolutionDensity.cpp"
 
+using namespace std;
+
 int main(int argc, char* argv[]){
-    
+
     // arguments
     int width;
     int height;
     int sampleSize;
     double stepSize;
-    string outputFile;
 
     // values output to file
     double average;
     double density;
 
-    double tempDensity;
-    int t = time(0);    
 
+    string outputFile;
+    double tempDensity;
+    int t = time(0); 
     srand(1);
 
-    if(argc != 6){
-        cout << "Please specify a width, height, sample size, step size, and output file name." << endl;
+    if(argc != 5){
+        cout << "Please specify a width, height, sample size, and step size." << endl;
         exit(1);
     }
     try{
@@ -35,18 +37,23 @@ int main(int argc, char* argv[]){
         height = stoi(argv[2]);
         sampleSize = stod(argv[3]);
         stepSize = stod(argv[4]);
-        outputFile = argv[5];
     } catch (const exception&){
         cout << "Please enter the correct types." << endl;
         exit(1);
     }
 
+    outputFile = "Densities"+to_string(width)+"by"+to_string(height)+
+                 "Sampling"+to_string(sampleSize)+".dat";
     ofstream o;
     o.open("OutputFiles/"+outputFile);
+
+    ofstream o2;
+    o2.open("OutputFiles/AllPointsOf"+outputFile);
 
     for(int stepIter=0; stepIter<floor(1/stepSize); stepIter++){  
         density = stepIter*stepSize;
         average = 0;
+        
 
         for(int sampleIter=1; sampleIter<=sampleSize; sampleIter++){
         
@@ -62,6 +69,7 @@ int main(int argc, char* argv[]){
             cout << endl;
 
             tempDensity = SolutionDensity(board);
+            o2 << density << " " << tempDensity << endl;
             average += tempDensity;
 
             t = time(0)-t;
