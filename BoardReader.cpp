@@ -19,13 +19,11 @@ using namespace std;
 
 void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
     for(int i = 0; i < array.size(); ++i){
-        if(i%4==1 && array[i] > x_limit){
-            cerr << "Invalid range out of bounds." << endl;
-            exit(1);
+        if(i%4 <= 1 && array[i] > x_limit){
+            INVALID_RANGES
         }
-        if(i%4==3 && array[i] > y_limit){
-            cerr << "Invalid range out of bounds." << endl;
-            exit(1);
+        else if(i%4 > 1 && array[i] > y_limit){
+            INVALID_RANGES
         }
         if(array[i]>=0){
             continue;

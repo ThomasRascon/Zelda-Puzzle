@@ -6,7 +6,7 @@
 using namespace std;
 
 
-double SolutionDensity(vector<vector<int>> board, vector<int> coords){
+double solutionDensity(vector<vector<int>> board, vector<int> coords){
 
     unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
     graph->build();
@@ -14,10 +14,12 @@ double SolutionDensity(vector<vector<int>> board, vector<int> coords){
     int numVisited = 0;
 
     for(const auto& target : graph->targetStates){
-        if(target->visited){
-            numVisited++;
+        if(insideOfRange(target, coords)){
+            if(target->visited){
+                numVisited++;
+            }
+            totalFinalStates++;
         }
-        totalFinalStates++;
     }
 
     if(totalFinalStates==0){

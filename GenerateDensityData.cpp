@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
     double average;
     double density;
 
-
+    vector<int> coords(12, -1);
     string outputFile;
     double tempDensity;
     int t = time(0); 
@@ -41,6 +41,8 @@ int main(int argc, char* argv[]){
         cout << "Please enter the correct types." << endl;
         exit(1);
     }
+
+    adjustCoordinates(coords, width, height);
 
     outputFile = "Densities"+to_string(width)+"by"+to_string(height)+
                  "Sampling"+to_string(sampleSize)+".dat";
@@ -68,7 +70,7 @@ int main(int argc, char* argv[]){
             }
             cout << endl;
 
-            tempDensity = SolutionDensity(board);
+            tempDensity = solutionDensity(board, coords);
             o2 << density << " " << tempDensity << endl;
             average += tempDensity;
 
