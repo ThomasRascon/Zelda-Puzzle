@@ -6,6 +6,14 @@
 #include <cctype>
 #include <unordered_set>
 
+#define INVALID_RANGES cerr << "Invalid ranges." << endl;\
+exit(1);
+#define INVALID_CHARACTER(x) cerr << "Invalid character: " << x << endl;\
+exit(1);
+#define ENTER_TARGETS cerr << "Please enter the targets." << endl;\
+exit(1);
+
+
 using namespace std;
 
 
@@ -25,15 +33,13 @@ void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
         if(i%4 == 3){
             array[i] = y_limit;
             if(array[i]<array[i-1]){
-                cerr << "Invalid ranges." << endl;
-                exit(1);
+                INVALID_RANGES
             }
         }
         else if(i%4 == 1){
             array[i] = x_limit;
             if(array[i]<array[i-1]){
-                cerr << "Invalid ranges." << endl;
-                exit(1);
+                INVALID_RANGES
             }
         }
         else{
@@ -74,8 +80,7 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
             while(iss.get(c)){
                 if(c==':' || c==',' || c==')'){
                     if(numString==""){
-                        cerr << "Invalid ranges." << endl;
-                        exit(1);
+                        INVALID_RANGES
                     }
                     array[index] = stoi(numString);
                     numString = "";
@@ -85,9 +90,8 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
                 else if(c==' ' || c=='('){
                     continue;
                 }
-                else if(!isdigit(c)){
-                    cerr << "Invalid character" << endl;
-                    exit(1);
+                else if(!isdigit(c) || (int)c < 0){
+                    INVALID_CHARACTER(c)
                 }
                 else{
                     numString += c;
@@ -117,8 +121,7 @@ pair<pair<int,int>, pair<int,int>> findTargets(vector<vector<int>> board) {
     }
 
     if(cords.size() != 4){
-        cerr << "Please enter the targets." << endl;
-        exit(1);
+        ENTER_TARGETS
     }
 
     pair<int,int> target_1 = {cords[0], cords[1]};
