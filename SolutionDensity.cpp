@@ -1,13 +1,14 @@
 #include "ZeldaGraph.hpp"
 #include "ZeldaGraph.cpp"
 #include "Helper.cpp"
+#include <memory>
 
 using namespace std;
 
 
-double SolutionDensity(vector<vector<int>> board){
+double SolutionDensity(vector<vector<int>> board, vector<int> coords){
 
-    GameGraph* graph = new GameGraph(board);
+    unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
     graph->build();
     int totalFinalStates = 0;
     int numVisited = 0;
@@ -18,8 +19,6 @@ double SolutionDensity(vector<vector<int>> board){
         }
         totalFinalStates++;
     }
-
-    delete graph;
 
     if(totalFinalStates==0){
         return 0;
