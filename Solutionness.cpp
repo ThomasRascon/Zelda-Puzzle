@@ -3,13 +3,14 @@
 #include "ZeldaGraph.hpp"
 #include "ZeldaGraph.cpp"
 #include "Helper.cpp"
+#include <memory>
 
 using namespace std;
 
 
 double solutionness(vector<vector<int>> board, vector<int> cords){
 
-    GameGraph* graph = new GameGraph(board, cords);
+    unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, cords);
     graph->build();
     double solutionRatio = 0;
 
@@ -22,8 +23,6 @@ double solutionness(vector<vector<int>> board, vector<int> cords){
     if(graph->getNumStartStates()==0){
         solutionRatio = 0;
     }
-
-    delete graph;
 
     return solutionRatio;
 }//EOF solutionDensity
