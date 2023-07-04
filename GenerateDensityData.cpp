@@ -6,7 +6,18 @@
 //       rewrite for solutionness
 #include <ctime>
 #include <fstream>
+
+#define SOLN_DENSITY 1
+
+#if SOLN_DENSITY==1
 #include "SolutionDensity.cpp"
+#define FUNC(board, coords) solutionDensity(board, coords)
+#define RESULT_TYPE "SolutionDensity"
+#else
+#include "Solutionness.cpp"
+#define FUNC(board, coords) solutionness(board, coords)
+#define RESULT_TYPE "Solutionness"
+#endif
 
 using namespace std;
 
@@ -44,13 +55,15 @@ int main(int argc, char* argv[]){
 
     adjustCoordinates(coords, width, height);
 
-    outputFile = "Densities"+to_string(width)+"by"+to_string(height)+
+    string place = RESULT_TYPE;
+    outputFile = to_string(width)+"by"+to_string(height)+
                  "Sampling"+to_string(sampleSize)+".dat";
     ofstream o;
-    o.open("OutputFiles/"+outputFile);
+    o.open("OutputFiles/"+place+"/"+outputFile);
 
     ofstream o2;
-    o2.open("OutputFiles/AllPointsOf"+outputFile);
+    o2.open("OutputFiles/"+place+"/"+"AllPointsOf"+outputFile);
+    cout << "OutputFiles/"+place+"/"+outputFile << endl;
 
     for(int stepIter=0; stepIter<floor(1/stepSize); stepIter++){  
         density = stepIter*stepSize;
@@ -70,14 +83,14 @@ int main(int argc, char* argv[]){
             }
             cout << endl;
 
-            tempDensity = solutionDensity(board, coords);
+            tempDensity = FUNC(board, coords);
             o2 << density << " " << tempDensity << endl;
             average += tempDensity;
 
             t = time(0)-t;
             cout << "Space Density: " << density << endl
                  << "Sample number: " << sampleIter << endl
-                 << "Solution Density: " << tempDensity << endl
+                 << RESULT_TYPE << ": " << tempDensity << endl
                  << "Time to calculate: " << t/60 << ":" << t%60 << endl;
             t = time(0);
             
