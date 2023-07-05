@@ -7,7 +7,7 @@
 #include <ctime>
 #include <fstream>
 
-#define SOLN_DENSITY 1
+#define SOLN_DENSITY 0
 
 #if SOLN_DENSITY==1
 #include "SolutionDensity.cpp"
@@ -62,14 +62,12 @@ int main(int argc, char* argv[]){
     o.open("OutputFiles/"+place+"/"+outputFile);
 
     ofstream o2;
-    o2.open("OutputFiles/"+place+"/"+"AllPointsOf"+outputFile);
-    cout << "OutputFiles/"+place+"/"+outputFile << endl;
+    o2.open("OutputFiles/"+place+"/AllPointsOf"+outputFile);
 
     for(int stepIter=0; stepIter<floor(1/stepSize); stepIter++){  
         density = stepIter*stepSize;
         average = 0;
         
-
         for(int sampleIter=1; sampleIter<=sampleSize; sampleIter++){
         
             vector<vector<int>> board = randomBoard(width, height, density);
