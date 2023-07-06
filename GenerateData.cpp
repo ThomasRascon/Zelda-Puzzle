@@ -53,7 +53,7 @@ int main(int argc, char* argv[]){
         exit(1);
     }
 
-    adjustCoordinates(coords, width, height);
+    adjustCoordinates(coords, width-1, height-1);
 
     string place = RESULT_TYPE;
     outputFile = to_string(width)+"by"+to_string(height)+
