@@ -21,39 +21,19 @@ GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords)
     auto targets = findTargets(configuration);
     this->target_1 = targets.first;
     this->target_2 = targets.second;
-
-    cout << endl << "Board:"<< endl;
-    for(int row = 0; row < configuration[0].size(); ++row){
-        for(int col = 0; col < configuration.size(); ++col){
-            cout << configuration[row][col] << " ";
-        }
-        cout << endl;
-    }
-    for(int c : coords){
-        cout << c << " ";
-    }
-    cout << endl;
 }//EOF GameGraph constructor
 
 
 void GameGraph::countOnTarget(GameState* currentState) {
-    cout << currentState->wolf.second << "," << currentState->wolf.first << "; " <<
-    currentState->p1.second << "," << currentState->p1.first << "; " <<
-    currentState->p2.second << "," << currentState->p2.first << " " << currentState->parents.size();
-
     currentState->onSolution = true;
     if(!currentState->target && insideOfRange(currentState, this->coords)){
         this->numSolvableStarts++;
-
     }
     for(auto parent : currentState->parents){
-        cout << " " << !parent->onSolution;
         if(!parent->onSolution){
-            cout << " c:" << endl;
             countOnTarget(parent);
         }
     }
-    cout << endl;
 }//EOF countOnTarget
 
 

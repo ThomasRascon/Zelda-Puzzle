@@ -13,15 +13,11 @@ double solutionness(vector<vector<int>> board, vector<int> coords){
     unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
     graph->build();
     double solutionRatio = 0;
-    int i = 0;
 
     for(const auto& target : graph->targetStates){
-        i += 1;
-        cout << "Target"<< i << ":" << endl;
         graph->countOnTarget(target);
     }
-
-    cout << graph->getNumStartStates() << " " << graph->getNumSolvableStarts() << endl;
+    
     solutionRatio = (double)graph->getNumSolvableStarts() / graph->getNumStartStates();
 
     if(graph->getNumStartStates()==0){

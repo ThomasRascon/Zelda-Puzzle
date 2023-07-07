@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
     string outputFile;
     double tempDensity;
     int t = time(0); 
-    srand(1);
+    srand(t);
 
     if(argc != 5){
         cout << "Please specify a width, height, sample size, and step size." << endl;
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
     ofstream o2;
     o2.open("OutputFiles/"+place+"/AllPointsOf"+outputFile);
 
-    for(int stepIter=0; stepIter<7; stepIter++){  
+    for(int stepIter=0; stepIter<1/stepSize; stepIter++){  
         density = stepIter*stepSize;
         average = 0;
         
@@ -72,14 +72,14 @@ int main(int argc, char* argv[]){
         
             vector<vector<int>> board = randomBoard(width, height, density);
 
-            // cout << endl << "Board:"<< endl;
-            // for(int row = 0; row < height; ++row){
-            //     for(int col = 0; col < width; ++col){
-            //         cout << board[row][col] << " ";
-            //     }
-            //     cout << endl;
-            // }
-            // cout << endl;
+            cout << endl << "Board:"<< endl;
+            for(int row = 0; row < height; ++row){
+                for(int col = 0; col < width; ++col){
+                    cout << board[row][col] << " ";
+                }
+                cout << endl;
+            }
+            cout << endl;
 
             tempDensity = FUNC(board, coords);
             o2 << density << " " << tempDensity << endl;

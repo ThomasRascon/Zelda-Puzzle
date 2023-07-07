@@ -35,6 +35,7 @@ struct GameState {
     this->p2 = p2;
     this->wolf = wolf;
     this->visited = false;
+    this->onSolution = false;
     this->target = target;
   }
 };
@@ -52,10 +53,10 @@ class GameGraph {
     pair<int,int> target_2;
     const vector<int> coords;
     const vector<vector<int>> configuration; // board configuration
-    unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
       
   public:
     list<GameState*> targetStates;
+    unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
   
     /**
      * GameGraph constructor
