@@ -47,16 +47,18 @@ class GameGraph {
     // dimensions of configuration
     int length;
     int width;
+    int solution_length;
     int numStartStates;
     int numSolvableStarts;
     pair<int,int> target_1;
     pair<int,int> target_2;
     const vector<int> coords;
+    list<char> shortest_solution;
     const vector<vector<int>> configuration; // board configuration
+    unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
       
   public:
     list<GameState*> targetStates;
-    unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
   
     /**
      * GameGraph constructor
@@ -82,7 +84,7 @@ class GameGraph {
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
     // NOTE: This seems to also be defined in ZeldaGraph.cpp
-    void createConnections(GameState* currentState);
+    void createConnections(GameState* currentState, bool trackMoves, list<char>& move_history);
 
     void countOnTarget(GameState* currentState);
   
@@ -93,7 +95,7 @@ class GameGraph {
      */
     GameState* createState(pair<int,int> ID, bool target);
   
-    void build();
+    void build(bool trackMoves);
 };
 
 #endif

@@ -11,10 +11,19 @@
 
 using namespace std;
 
+// int main() {
+//     auto info = readBoard("BoardConfigs/board1.txt");
+//     vector<vector<int>> board = info.first;
+//     vector<int> coords = info.second;
+//     FUNC(board, coords);
+//     cout << "Ended successfuly";
+// }
+
 int main() {
     auto info = readBoard("BoardConfigs/board1.txt");
     vector<vector<int>> board = info.first;
     vector<int> coords = info.second;
-    FUNC(board, coords);
+    unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
+    graph->build(true);
     cout << "Ended successfuly";
 }
