@@ -8,7 +8,7 @@ import sys
 import os.path
 
 
-SOLN_DENSITY = 0
+SOLN_DENSITY = 1
 
 if(SOLN_DENSITY):
     place = 'SolutionDensity/'
@@ -19,7 +19,7 @@ else:
 
 
 if(len(sys.argv)!=4):
-    print('Enter width, height, sample size, and step size.')
+    print('Enter width, height, sample size.')
     exit()
 
 width = sys.argv[1]
@@ -54,6 +54,6 @@ plt.xlabel('Space Density', fontsize=15)
 plt.ylabel(y_value, fontsize=15)
 
 
-plt.savefig('OutputFiles/'+inputFile+'.pdf')
+plt.savefig('OutputFiles/'+place+inputFile+'.pdf')
 
 plt.show()
