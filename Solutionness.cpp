@@ -11,7 +11,7 @@ using namespace std;
 double solutionness(vector<vector<int>> board, vector<int> coords){
 
     unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
-    graph->build();
+    graph->build(false);
     double solutionRatio = 0;
 
     for(const auto& target : graph->targetStates){

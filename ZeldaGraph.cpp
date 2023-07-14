@@ -2,6 +2,7 @@
 #include "Helper.cpp"
 #include "BoardReader.cpp"
 #include <fstream>
+#include <limits>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords)
     this->length = configuration.size();
     this->width = configuration[0].size();
     this->numSolvableStarts = 0;
+    this->solution_length = numeric_limits<int>::max();
     this->numStartStates = 0;
 
     auto targets = findTargets(configuration);
@@ -121,9 +123,13 @@ void GameGraph::populateMap() {
 }//EOF populateMap
 
 
-void GameGraph::createConnections(GameState* currentState) {
+void GameGraph::createConnections(GameState* currentState, bool trackMoves, list<char>& move_history) {
     currentState->visited = true;
     if(currentState->target){
+        if(move_history.size() < this->solution_length){
+            this->shortest_solution = move_history;
+            this->solution_length = move_history.size();
+        }
         return;
     }
 
@@ -146,7 +152,13 @@ void GameGraph::createConnections(GameState* currentState) {
         
         //if the neighbor has not been visited yet...
         if(!neighbor->visited){
-            createConnections(neighbor);	//recurrsively call createConnections on the neighbor
+            if(trackMoves){
+                move_history.push_back(move);
+            }
+            createConnections(neighbor, trackMoves, move_history);	//recurrsively call createConnections on the neighbor
+            if(trackMoves){
+                move_history.pop_back();
+            }
         }
         
         currentState->moves[i] = true;            //Since the move is valid
@@ -176,14 +188,26 @@ void GameGraph::findTargetStates() {
 }//EOF findTargetStates
 
 
-void GameGraph::build() {
+void GameGraph::build(bool trackMoves) {
 	populateMap();
+    list<char> move_history;
 	for(auto pair : gameMap){
 		GameState* curr = pair.second;
 		if(curr->visited || curr->target || !insideOfRange(curr, coords)){
             continue;
         }
-        createConnections(curr);
+        createConnections(curr, trackMoves, move_history);
+        if(trackMoves){
+            cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
+            curr->p1.second << "," << curr->p1.first << "; " <<
+            curr->p2.second << "," << curr->p2.first << " (" <<
+            this->shortest_solution.size() << " moves):" << endl;
+            for(const char& move : this->shortest_solution){
+                cout << move << " ";
+            }
+            cout << endl;
+        }
+        trackMoves = false;
 	}//EOF for
     findTargetStates();
 }//EOF build
