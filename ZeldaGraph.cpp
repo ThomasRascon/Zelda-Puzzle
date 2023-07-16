@@ -8,7 +8,7 @@ using namespace std;
 
 
 //Declare the array of move types
-const char moveTypes[4] = {'U','D','L','R'};
+const char moveTypes[4] = {'U','L','D','R'};
 
 
 GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords) 
@@ -198,9 +198,9 @@ void GameGraph::build(bool trackMoves = false) {
         }
         createConnections(curr, trackMoves, move_history);
         if(trackMoves){
-            cout << curr->wolf.second << "," << curr->wolf.first << "; " <<
-            curr->p1.second << "," << curr->p1.first << "; " <<
-            curr->p2.second << "," << curr->p2.first << " (" <<
+            cout << curr->wolf.first+1 << "," << curr->wolf.second+1 << "; " <<
+            curr->p1.first+1 << "," << curr->p1.second+1 << "; " <<
+            curr->p2.first+1 << "," << curr->p2.second+1 << " (" <<
             this->shortest_solution.size() << " moves):" << endl;
             for(const char& move : this->shortest_solution){
                 cout << move << " ";

@@ -20,29 +20,30 @@ using namespace std;
 
 void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
     for(int i = 0; i < array.size(); ++i){
-        if(i%4 <= 1 && array[i] > x_limit){
+        array[i]--;
+        if(i%4 <= 1 && array[i] > x_limit-1){
             INVALID_RANGES
         }
-        else if(i%4 > 1 && array[i] > y_limit){
+        else if(i%4 > 1 && array[i] > y_limit-1){
             INVALID_RANGES
         }
-        if(array[i]>0){
+        if(array[i]>=0){
             continue;
         }        
         if(i%4 == 3){
-            array[i] = y_limit;
+            array[i] = y_limit-1;
             if(array[i]<array[i-1]){
                 INVALID_RANGES
             }
         }
         else if(i%4 == 1){
-            array[i] = x_limit;
+            array[i] = x_limit-1;
             if(array[i]<array[i-1]){
                 INVALID_RANGES
             }
         }
         else{
-            array[i] = 1;
+            array[i] = 0;
         }
     }
 }//EOF adjustCoordinates
@@ -77,7 +78,7 @@ list<pair<vector<vector<int>>, vector<int>>> readBoard(string filename) {
         }
 
         else{
-            // Process array lines
+            //Process array lines
             string numString = "";
             index += (4-(index%4))%4;
             while(iss.get(c)){
@@ -104,23 +105,31 @@ list<pair<vector<vector<int>>, vector<int>>> readBoard(string filename) {
                 }
             }//EOF while
         }//EOF else
+        
         if(c==';'){
-            if(matrix.size()==0){
-                matrix = boards.back().first;
-            }
-            for(int i = 0; i < 12; i++){
-                if(array[i]==0){
-                    array[i] = boards.back().second[i];
-                }
-            }
             if(boards.size()==0){
                 adjustCoordinates(array, matrix[0].size(), matrix.size());
+            }
+            else{
+                for(int i = 0; i < 12; i++){
+                    if(array[i]==0){
+                        array[i] = boards.back().second[i];
+                    }
+                    else{
+                        array[i]--;
+                    }
+                }
+                if(matrix.size()==0){
+                    matrix = boards.back().first;
+                }
             }
             boards.push_back({matrix, array});
             matrix.clear();
             matrix.resize(0);
             array.assign(12, 0);
             matrixComplete = false;
+            c = ' ';
+            index = 0;
         }
     }
 

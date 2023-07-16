@@ -5,21 +5,21 @@
 #define FUNC(board, coords) cout << "Solution Density:" << solutionDensity(board, coords) << endl
 #else
 #include "Solutionness.cpp"
-#define FUNC(board, coords) cout << "Solutionness:" << solutionness(board, coords) << endl
+#define FUNC(board, coords) cout << "Solutionness: " << solutionness(board, coords) << endl
 #endif
 
 
 using namespace std;
 
 int main() {
-    cout << "HI";
     auto boards = readBoard("BoardConfigs/board1.txt");
-    cout << "HI";
+    int index = 1;
     for(auto const& config : boards){
-        cout << "Hi" << endl;
+        cout << endl << "Board " << index << ":" << endl;
         vector<vector<int>> board = config.first;
         vector<int> coords = config.second;
         FUNC(board, coords);
+        index++;
     }
-    cout << "Ended successfuly";
+    cout << endl << "Ended successfuly";
 }
