@@ -7,7 +7,7 @@
 #include <ctime>
 #include <fstream>
 
-#define SOLN_DENSITY 0
+#define SOLN_DENSITY 1 
 
 #if SOLN_DENSITY==1
 #include "SolutionDensity.cpp"

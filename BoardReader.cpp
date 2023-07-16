@@ -4,6 +4,7 @@
 #include <vector>
 #include <random>
 #include <cctype>
+#include <list>
 #include <unordered_set>
 
 #define INVALID_RANGES cerr << "Invalid ranges." << endl;\
@@ -25,7 +26,7 @@ void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
         else if(i%4 > 1 && array[i] > y_limit){
             INVALID_RANGES
         }
-        if(array[i]>=0){
+        if(array[i]>0){
             continue;
         }        
         if(i%4 == 3){
@@ -41,22 +42,27 @@ void adjustCoordinates(vector<int>& array, int x_limit, int y_limit) {
             }
         }
         else{
-            array[i] = 0;
+            array[i] = 1;
         }
     }
 }//EOF adjustCoordinates
 
 
-pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
+list<pair<vector<vector<int>>, vector<int>>> readBoard(string filename) {
     ifstream file(filename);
     string line;
     int index = 0;
+    list<pair<vector<vector<int>>, vector<int>>> boards;
     vector<vector<int>> matrix;
-    vector<int> array(12, -1);
+    vector<int> array(12, 0);
     bool matrixComplete = false;
 
     while(getline(file, line)) {
-        if(line.empty() || line[0] == '(') {
+        char c;
+        if(line.empty()){
+            continue;
+        }
+        if(line[0] == '(') {
             matrixComplete = true;
         }
 
@@ -72,7 +78,6 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
 
         else{
             // Process array lines
-            char c;
             string numString = "";
             index += (4-(index%4))%4;
             while(iss.get(c)){
@@ -88,19 +93,38 @@ pair<vector<vector<int>>, vector<int>> readBoard(string filename) {
                 else if(c==' ' || c=='('){
                     continue;
                 }
-                else if(!isdigit(c) || (int)c < 0){
+                else if(c==';'){
+                    break;
+                }
+                else if(!isdigit(c)){
                     INVALID_CHARACTER(c)
                 }
                 else{
                     numString += c;
                 }
+            }//EOF while
+        }//EOF else
+        if(c==';'){
+            if(matrix.size()==0){
+                matrix = boards.back().first;
             }
+            for(int i = 0; i < 12; i++){
+                if(array[i]==0){
+                    array[i] = boards.back().second[i];
+                }
+            }
+            if(boards.size()==0){
+                adjustCoordinates(array, matrix[0].size(), matrix.size());
+            }
+            boards.push_back({matrix, array});
+            matrix.clear();
+            matrix.resize(0);
+            array.assign(12, 0);
+            matrixComplete = false;
         }
     }
 
-    adjustCoordinates(array, matrix[0].size()-1, matrix.size()-1);
-
-    return {matrix, array};
+    return boards;
 }//EOF readBoard
 
 

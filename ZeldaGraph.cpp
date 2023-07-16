@@ -188,7 +188,7 @@ void GameGraph::findTargetStates() {
 }//EOF findTargetStates
 
 
-void GameGraph::build(bool trackMoves) {
+void GameGraph::build(bool trackMoves = false) {
 	populateMap();
     list<char> move_history;
 	for(auto pair : gameMap){
