@@ -8,7 +8,7 @@ using namespace std;
 
 
 //Declare the array of move types
-const char moveTypes[4] = {'U','L','D','R'};
+const char MOVES[4] = {'U','D','L','R'};
 
 
 GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords) 
@@ -17,7 +17,7 @@ GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords)
     this->length = configuration.size();
     this->width = configuration[0].size();
     this->numSolvableStarts = 0;
-    this->solution_length = numeric_limits<int>::max();
+    this->shortest_length = numeric_limits<int>::max();
     this->numStartStates = 0;
 
     auto targets = findTargets(configuration);
@@ -122,14 +122,71 @@ void GameGraph::populateMap() {
 	}//EOF wolf for loop
 }//EOF populateMap
 
+list<char> GameGraph::solutionFinder(pair<int,int> wolf,
+       pair<int,int> p1, pair<int,int> p2, bool shortest)
+{
+    list<char> move_history;
+    unordered_set<GameState*> visited_states;
+    auto id = pairsToID(wolf, p1, p2);
+    GameState* startState = gameMap.find(id)->second;
+    solutionDFS(startState, move_history, 0, visited_states, shortest);
 
-void GameGraph::createConnections(GameState* currentState, bool trackMoves, list<char>& move_history) {
+    if(shortest){
+        return this->shortest_solution;
+    }
+    else{
+        return this->longest_solution;
+    }
+}
+
+void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
+        int path_size, unordered_set<GameState*> visited_states, bool shortest)
+{
+    if(currentState->target){
+        if(shortest && move_history.size() < this->shortest_length){
+            this->shortest_solution = move_history;
+            this->shortest_length = move_history.size();
+        }
+        else if(!shortest && move_history.size() > this->longest_solution.size()){
+            this->longest_solution = move_history;
+        }
+        return;
+    }
+
+    if(shortest && path_size == this->shortest_length - 1){
+        return;
+    }
+
+    for(int i = 0; i < 4; ++i){  
+
+        char move = MOVES[i];
+
+        //if the move is not valid terminate
+        if(!currentState->moves[i]){
+            continue;
+        }
+
+        GameState* neighbor = currentState->neighbors[i];  //search the gameMap for the neighbor
+        
+        //if the neighbor has been visited terminate
+        if(visited_states.find(neighbor) != visited_states.end()){
+            continue;
+        }
+
+        move_history.push_back(move);
+        visited_states.insert(neighbor);
+        solutionDFS(neighbor, move_history, path_size+1, visited_states, shortest);	//recurrsively call on the neighbor
+        move_history.pop_back();
+        visited_states.erase(neighbor);
+
+    }//EOF for loop (moves loop)
+}//EOF solutionDFS
+
+
+void GameGraph::createConnections(GameState* currentState) {
+
     currentState->visited = true;
     if(currentState->target){
-        if(move_history.size() < this->solution_length){
-            this->shortest_solution = move_history;
-            this->solution_length = move_history.size();
-        }
         return;
     }
 
@@ -139,7 +196,7 @@ void GameGraph::createConnections(GameState* currentState, bool trackMoves, list
     
     for(int i = 0; i < 4; ++i){  
 
-        char move = moveTypes[i];
+        char move = MOVES[i];
 
         //if the move is not valid...
         if(!validMove(configuration, currentState, move)){
@@ -152,13 +209,7 @@ void GameGraph::createConnections(GameState* currentState, bool trackMoves, list
         
         //if the neighbor has not been visited yet...
         if(!neighbor->visited){
-            if(trackMoves){
-                move_history.push_back(move);
-            }
-            createConnections(neighbor, trackMoves, move_history);	//recurrsively call createConnections on the neighbor
-            if(trackMoves){
-                move_history.pop_back();
-            }
+            createConnections(neighbor);	//recurrsively call createConnections on the neighbor
         }
         
         currentState->moves[i] = true;            //Since the move is valid
@@ -188,26 +239,14 @@ void GameGraph::findTargetStates() {
 }//EOF findTargetStates
 
 
-void GameGraph::build(bool trackMoves = false) {
+void GameGraph::build() {
 	populateMap();
-    list<char> move_history;
 	for(auto pair : gameMap){
 		GameState* curr = pair.second;
 		if(curr->visited || curr->target || !insideOfRange(curr, coords)){
             continue;
         }
-        createConnections(curr, trackMoves, move_history);
-        if(trackMoves){
-            cout << curr->wolf.first+1 << "," << curr->wolf.second+1 << "; " <<
-            curr->p1.first+1 << "," << curr->p1.second+1 << "; " <<
-            curr->p2.first+1 << "," << curr->p2.second+1 << " (" <<
-            this->shortest_solution.size() << " moves):" << endl;
-            for(const char& move : this->shortest_solution){
-                cout << move << " ";
-            }
-            cout << endl;
-        }
-        trackMoves = false;
+        createConnections(curr);
 	}//EOF for
     findTargetStates();
 }//EOF build

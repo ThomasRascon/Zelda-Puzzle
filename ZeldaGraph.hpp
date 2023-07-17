@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <unordered_map>
+#include <unordered_set>
 #include <list>
 
 using namespace std;
@@ -47,13 +48,14 @@ class GameGraph {
     // dimensions of configuration
     int length;
     int width;
-    int solution_length;
+    int shortest_length;
     int numStartStates;
     int numSolvableStarts;
     pair<int,int> target_1;
     pair<int,int> target_2;
     const vector<int> coords;
     list<char> shortest_solution;
+    list<char> longest_solution;
     const vector<vector<int>> configuration; // board configuration
     unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
       
@@ -84,9 +86,15 @@ class GameGraph {
       // check if possible moves have been created, if not create them
       // if possible move has not been visited, run GenerateNeighbors on it
     // NOTE: This seems to also be defined in ZeldaGraph.cpp
-    void createConnections(GameState* currentState, bool trackMoves, list<char>& move_history);
+    void createConnections(GameState* currentState);
 
     void countOnTarget(GameState* currentState);
+
+    list<char> solutionFinder(pair<int,int> wolf, pair<int,int> p1,
+                                    pair<int,int> p2, bool shortest);
+
+    void solutionDFS(GameState* currentState, list<char>& move_history,
+        int path_size, unordered_set<GameState*> visited_states, bool shortest);
   
     void findTargetStates();
   
@@ -95,7 +103,7 @@ class GameGraph {
      */
     GameState* createState(pair<int,int> ID, bool target);
   
-    void build(bool trackMoves);
+    void build();
 };
 
 #endif
