@@ -50,11 +50,18 @@ class PuzzleGame:
     def move_wolf(self, new_pos):
         if self.is_valid_move(new_pos):
             self.wolf_pos = new_pos
-            self.piece1_pos = self.get_new_position(self.piece1_pos, self.wolf_pos, self.path[-1], same_direction=True)
-            self.piece2_pos = self.get_new_position(self.piece2_pos, self.wolf_pos, self.path[-1], same_direction=False)
+            self.move_pieces()
             self.draw_board()
             if (self.piece1_pos, self.piece2_pos) == self.target_positions:
                 self.canvas.create_text(200, 200, text="Congratulations! You won!", font=('Arial', 24, 'bold'))
+
+    def move_pieces(self):
+        new_piece1_pos = self.get_new_position(self.piece1_pos, self.wolf_pos, self.path[-1], same_direction=True)
+        new_piece2_pos = self.get_new_position(self.piece2_pos, self.wolf_pos, self.path[-1], same_direction=False)
+
+        if self.is_valid_piece_move(new_piece1_pos, new_piece2_pos):
+            self.piece1_pos = new_piece1_pos
+            self.piece2_pos = new_piece2_pos
 
     def move_wolf_up(self, event):
         self.path.append(self.wolf_pos)
@@ -79,7 +86,13 @@ class PuzzleGame:
         if self.board[new_pos[0]][new_pos[1]] == 0:
             return False
 
-        if new_pos == self.piece1_pos or new_pos == self.piece2_pos:
+        return True
+
+    def is_valid_piece_move(self, new_piece1_pos, new_piece2_pos):
+        if new_piece1_pos == new_piece2_pos:
+            return False
+
+        if self.board[new_piece1_pos[0]][new_piece1_pos[1]] == 0 or self.board[new_piece2_pos[0]][new_piece2_pos[1]] == 0:
             return False
 
         return True
@@ -87,18 +100,3 @@ class PuzzleGame:
     def get_new_position(self, current_pos, wolf_pos, move, same_direction=True):
         direction = 1 if same_direction else -1
         return current_pos[0] + direction * (move[0] - wolf_pos[0]), current_pos[1] + direction * (move[1] - wolf_pos[1])
-    
-# Example usage
-board = [[1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1],
-        [1,1,1,0,0,0,1,1,1],
-        [0,0,0,1,1,1,0,0,0],
-        [0,0,0,1,1,1,0,0,0],
-        [0,0,0,1,1,1,0,0,0]]
-
-board[2][2] = 2  # First target position
-board[4][4] = 2  # Second target position
-
-initial_positions = ((1, 7), (1, 1), (4, 4))
-
-game = PuzzleGame(board, initial_positions)
