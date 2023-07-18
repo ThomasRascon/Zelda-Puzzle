@@ -127,8 +127,11 @@ list<char> GameGraph::solutionFinder(pair<int,int> wolf,
 {
     list<char> move_history;
     unordered_set<GameState*> visited_states;
+    cout << "HI";
     auto id = pairsToID(wolf, p1, p2);
+    cout << id.first << " " << id.second;
     GameState* startState = gameMap.find(id)->second;
+    cout << "Hello";
     solutionDFS(startState, move_history, 0, visited_states, shortest);
 
     if(shortest){
@@ -137,7 +140,7 @@ list<char> GameGraph::solutionFinder(pair<int,int> wolf,
     else{
         return this->longest_solution;
     }
-}
+}//EOF solutionFinder
 
 void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
         int path_size, unordered_set<GameState*> visited_states, bool shortest)
