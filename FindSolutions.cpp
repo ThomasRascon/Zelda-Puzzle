@@ -22,7 +22,7 @@ int main() {
         unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
         graph->build();
         pair<int,int> wolf={coords[0],coords[2]},p1={coords[4],coords[6]},p2={coords[8],coords[10]};
-        list<char> solution = graph->solutionFinder(wolf, p1, p2, true);
+        list<char> solution = graph->solutionFinder(wolf, p1, p2, false);
         cout << wolf.first+1 << "," << wolf.second+1 << "; " << p1.first+1 << "," << p1.second+1 <<
         "; " << p2.first+1 << "," << p2.second+1 << " (" << solution.size() << " moves):" << endl;
         for(const char& move : solution){
@@ -31,5 +31,5 @@ int main() {
         cout << endl;
         index++;
     }
-    cout << "Ended successfuly";
+    cout << endl << "Ended successfuly";
 }//EOF main
