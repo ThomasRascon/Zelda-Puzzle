@@ -49,19 +49,21 @@ class PuzzleGame:
 
     def move_wolf(self, new_pos):
         if self.is_valid_move(new_pos):
+            new_piece1_pos = self.get_new_position(self.piece1_pos, self.wolf_pos, new_pos, same_direction=True)
+            new_piece2_pos = self.get_new_position(self.piece2_pos, self.wolf_pos, new_pos, same_direction=False)
+
+            if new_pos == self.piece2_pos or new_pos in [self.piece1_pos, self.piece2_pos]:
+                return  # Invalid move, do not change positions
+
+            if self.is_valid_piece_move(new_piece1_pos, self.piece2_pos):
+                self.piece1_pos = new_piece1_pos
+            if self.is_valid_piece_move(new_piece2_pos, self.piece1_pos):
+                self.piece2_pos = new_piece2_pos
+
             self.wolf_pos = new_pos
-            self.move_pieces()
             self.draw_board()
             if (self.piece1_pos, self.piece2_pos) == self.target_positions:
                 self.canvas.create_text(200, 200, text="Congratulations! You won!", font=('Arial', 24, 'bold'))
-
-    def move_pieces(self):
-        new_piece1_pos = self.get_new_position(self.piece1_pos, self.wolf_pos, self.path[-1], same_direction=True)
-        new_piece2_pos = self.get_new_position(self.piece2_pos, self.wolf_pos, self.path[-1], same_direction=False)
-
-        if self.is_valid_piece_move(new_piece1_pos, new_piece2_pos):
-            self.piece1_pos = new_piece1_pos
-            self.piece2_pos = new_piece2_pos
 
     def move_wolf_up(self, event):
         self.path.append(self.wolf_pos)
@@ -88,15 +90,34 @@ class PuzzleGame:
 
         return True
 
-    def is_valid_piece_move(self, new_piece1_pos, new_piece2_pos):
-        if new_piece1_pos == new_piece2_pos:
+    def is_valid_piece_move(self, new_piece_pos, other_piece_pos):
+        if new_piece_pos == other_piece_pos:
             return False
 
-        if self.board[new_piece1_pos[0]][new_piece1_pos[1]] == 0 or self.board[new_piece2_pos[0]][new_piece2_pos[1]] == 0:
+        if self.board[new_piece_pos[0]][new_piece_pos[1]] == 0:
             return False
 
         return True
 
     def get_new_position(self, current_pos, wolf_pos, move, same_direction=True):
-        direction = 1 if same_direction else -1
-        return current_pos[0] + direction * (move[0] - wolf_pos[0]), current_pos[1] + direction * (move[1] - wolf_pos[1])
+        if same_direction:
+            direction = 1
+        else:
+            direction = -1
+
+        dx, dy = move[0] - wolf_pos[0], move[1] - wolf_pos[1]
+        new_pos = current_pos[0] + direction * dx, current_pos[1] + direction * dy
+
+        return new_pos
+
+# Example usage
+board = [[1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [1, 2, 1, 1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 0, 0, 0, 1, 1, 1],
+         [0, 0, 0, 1, 1, 1, 0, 0, 0],
+         [0, 0, 0, 1, 2, 1, 0, 0, 0],
+         [0, 0, 0, 1, 1, 1, 0, 0, 0]]
+
+initial_positions = ((1, 7), (4, 5), (1, 1))
+
+game = PuzzleGame(board, initial_positions)
