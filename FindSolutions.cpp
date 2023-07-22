@@ -22,11 +22,24 @@ int main() {
         unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
         graph->build();
         pair<int,int> wolf={coords[0],coords[2]},p1={coords[4],coords[6]},p2={coords[8],coords[10]};
-        list<char> solution = graph->solutionFinder(wolf, p1, p2, false);
+        list<char> solution = graph->solutionFinder(wolf, p1, p2, true);
         cout << wolf.first+1 << "," << wolf.second+1 << "; " << p1.first+1 << "," << p1.second+1 <<
-        "; " << p2.first+1 << "," << p2.second+1 << " (" << solution.size() << " moves):" << endl;
-        for(const char& move : solution){
-            cout << move << " ";
+        "; " << p2.first+1 << "," << p2.second+1;
+        if(solution.size() == 0){
+            cout << ":" << endl << "NO SOLUTION";
+        }
+        else if(solution.front() == 'I'){
+            cout << ":" << endl << "INVALID START STATE";
+        }
+        else{
+            cout << " (" << solution.size() << " move";
+            if(solution.size() > 1){
+                cout << "s";
+            }
+            cout << "):" << endl;
+            for(const char& move : solution){
+                cout << move << " ";
+        }
         }
         cout << endl;
         index++;

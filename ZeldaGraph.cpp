@@ -122,16 +122,18 @@ void GameGraph::populateMap() {
 	}//EOF wolf for loop
 }//EOF populateMap
 
+
 list<char> GameGraph::solutionFinder(pair<int,int> wolf,
        pair<int,int> p1, pair<int,int> p2, bool shortest)
 {
     list<char> move_history;
     unordered_set<GameState*> visited_states;
-    cout << "HI";
     auto id = pairsToID(wolf, p1, p2);
-    cout << id.first << " " << id.second;
-    GameState* startState = gameMap.find(id)->second;
-    cout << "Hello";
+    auto tempIter = gameMap.find(id);
+    if(tempIter == gameMap.end()){
+        return {'I'};
+    }
+    GameState* startState = tempIter->second;
     solutionDFS(startState, move_history, 0, visited_states, shortest);
 
     if(shortest){
@@ -141,6 +143,7 @@ list<char> GameGraph::solutionFinder(pair<int,int> wolf,
         return this->longest_solution;
     }
 }//EOF solutionFinder
+
 
 void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
         int path_size, unordered_set<GameState*> visited_states, bool shortest)
@@ -170,7 +173,6 @@ void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
         }
 
         GameState* neighbor = currentState->neighbors[i];  //search the gameMap for the neighbor
-        
         //if the neighbor has been visited terminate
         if(visited_states.find(neighbor) != visited_states.end()){
             continue;
