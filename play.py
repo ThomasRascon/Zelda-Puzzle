@@ -67,19 +67,27 @@ class PuzzleGame:
 
     def move_wolf_up(self, event):
         self.path.append(self.wolf_pos)
-        self.move_wolf((self.wolf_pos[0] - 1, self.wolf_pos[1]))
+        new_pos = (self.wolf_pos[0] - 1, self.wolf_pos[1])
+        if self.is_valid_move(new_pos):
+            self.move_wolf(new_pos)
 
     def move_wolf_down(self, event):
         self.path.append(self.wolf_pos)
-        self.move_wolf((self.wolf_pos[0] + 1, self.wolf_pos[1]))
+        new_pos = (self.wolf_pos[0] + 1, self.wolf_pos[1])
+        if self.is_valid_move(new_pos):
+            self.move_wolf(new_pos)
 
     def move_wolf_left(self, event):
         self.path.append(self.wolf_pos)
-        self.move_wolf((self.wolf_pos[0], self.wolf_pos[1] - 1))
+        new_pos = (self.wolf_pos[0], self.wolf_pos[1] - 1)
+        if self.is_valid_move(new_pos):
+            self.move_wolf(new_pos)
 
     def move_wolf_right(self, event):
         self.path.append(self.wolf_pos)
-        self.move_wolf((self.wolf_pos[0], self.wolf_pos[1] + 1))
+        new_pos = (self.wolf_pos[0], self.wolf_pos[1] + 1)
+        if self.is_valid_move(new_pos):
+            self.move_wolf(new_pos)
 
     def is_valid_move(self, new_pos):
         if not (0 <= new_pos[0] < len(self.board) and 0 <= new_pos[1] < len(self.board[0])):
@@ -92,6 +100,9 @@ class PuzzleGame:
 
     def is_valid_piece_move(self, new_piece_pos, other_piece_pos):
         if new_piece_pos == other_piece_pos:
+            return False
+
+        if not (0 <= new_piece_pos[0] < len(self.board) and 0 <= new_piece_pos[1] < len(self.board[0])):
             return False
 
         if self.board[new_piece_pos[0]][new_piece_pos[1]] == 0:
