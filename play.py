@@ -53,17 +53,30 @@ class PuzzleGame:
             new_piece2_pos = self.get_new_position(self.piece2_pos, self.wolf_pos, new_pos, same_direction=False)
 
             if new_pos == self.piece2_pos or new_pos in [self.piece1_pos, self.piece2_pos]:
-                return  # Invalid move, do not change positions
+                self.display_message("Can't do that move", duration=1000)
+            elif new_piece1_pos == new_piece2_pos:
+                self.display_message("Can't do that move", duration=1000)
+            elif self.wolf_and_piece2_will_overlap(new_pos):
+                self.display_message("Can't do that move", duration=1000)
+            else:
+                if self.is_valid_piece_move(new_piece1_pos, self.piece2_pos):
+                    self.piece1_pos = new_piece1_pos
+                if self.is_valid_piece_move(new_piece2_pos, self.piece1_pos):
+                    self.piece2_pos = new_piece2_pos
 
-            if self.is_valid_piece_move(new_piece1_pos, self.piece2_pos):
-                self.piece1_pos = new_piece1_pos
-            if self.is_valid_piece_move(new_piece2_pos, self.piece1_pos):
-                self.piece2_pos = new_piece2_pos
+                self.wolf_pos = new_pos
+                self.draw_board()
+                if (self.piece1_pos, self.piece2_pos) == self.target_positions:
+                    self.canvas.create_text(200, 200, text="Congratulations! You won!", font=('Arial', 24, 'bold'))
 
-            self.wolf_pos = new_pos
-            self.draw_board()
-            if (self.piece1_pos, self.piece2_pos) == self.target_positions:
-                self.canvas.create_text(200, 200, text="Congratulations! You won!", font=('Arial', 24, 'bold'))
+    def wolf_and_piece2_will_overlap(self, new_pos):
+        movement=(new_pos[0]-self.wolf_pos[0],new_pos[1]-self.wolf_pos[1])
+        new_piece2_position=(self.piece2_pos[0]-movement[0],self.piece2_pos[1]-movement[1])
+        return new_pos==new_piece2_position
+
+    def display_message(self, message, duration):
+        message_obj = self.canvas.create_text(200, 200, text=message, font=('Arial', 24, 'bold'))
+        self.root.after(duration, lambda: self.canvas.delete(message_obj))
 
     def move_wolf_up(self, event):
         self.path.append(self.wolf_pos)
