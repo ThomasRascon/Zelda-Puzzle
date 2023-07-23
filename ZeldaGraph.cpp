@@ -26,29 +26,6 @@ GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords)
 }//EOF GameGraph constructor
 
 
-void GameGraph::countOnTarget(GameState* currentState) {
-    currentState->onSolution = true;
-    if(!currentState->target && insideOfRange(currentState, this->coords)){
-        this->numSolvableStarts++;
-    }
-    for(auto parent : currentState->parents){
-        if(!parent->onSolution){
-            countOnTarget(parent);
-        }
-    }
-}//EOF countOnTarget
-
-
-int GameGraph::getNumSolvableStarts() {
-    return this->numSolvableStarts;
-}//EOF getNumSolvableStarts
-
-
-int GameGraph::getNumStartStates() {
-    return this->numStartStates;
-}//EOF getNumStartStates
-
-
 GameState* GameGraph::createState(pair<int,int> ID, bool target) {
 	//ex ID={2312 78900137} -> ID.first=2312, newWolf={23,12}
 	//ID.second = 78900137, newP1={78,90}, newP2={01,37}
@@ -123,19 +100,27 @@ void GameGraph::populateMap() {
 }//EOF populateMap
 
 
-list<char> GameGraph::solutionFinder(pair<int,int> wolf,
-       pair<int,int> p1, pair<int,int> p2, bool shortest)
-{
+int GameGraph::getNumStartStates() {
+    return this->numStartStates;
+}//EOF getNumStartStates
+
+
+int GameGraph::calcNumSolvableStarts() {
+    for(auto target : this->targetStates){
+        this->countOnTarget(target);
+    }
+    return this->numSolvableStarts;
+}//EOF solutionFinder
+
+
+list<char> GameGraph::solutionFinder(bool shortest) {
     list<char> move_history;
     unordered_set<GameState*> visited_states;
-    auto id = pairsToID(wolf, p1, p2);
-    auto tempIter = gameMap.find(id);
-    if(tempIter == gameMap.end()){
-        return {'I'};
+    for(auto target : this->targetStates){
+        visited_states.insert(target);
+        solutionDFS(target, move_history, 1, visited_states, shortest);
+        visited_states.erase(target);
     }
-    GameState* startState = tempIter->second;
-    solutionDFS(startState, move_history, 0, visited_states, shortest);
-
     if(shortest){
         return this->shortest_solution;
     }
@@ -145,10 +130,24 @@ list<char> GameGraph::solutionFinder(pair<int,int> wolf,
 }//EOF solutionFinder
 
 
+void GameGraph::countOnTarget(GameState* currentState) {
+    currentState->onSolution = true;
+    if(!currentState->target && insideOfRange(currentState, this->coords)){
+        this->numSolvableStarts++;
+    }
+    for(auto parentPair : currentState->parents){
+        auto parent = parentPair.first;
+        if(!parent->onSolution){
+            countOnTarget(parent);
+        }
+    }
+}//EOF countOnTarget
+
+
 void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
-        int path_size, unordered_set<GameState*> visited_states, bool shortest)
+          int path_size, unordered_set<GameState*> visited_states, bool shortest)
 {
-    if(currentState->target){
+    if(insideOfRange(currentState, this->coords)){
         if(shortest && move_history.size() < this->shortest_length){
             this->shortest_solution = move_history;
             this->shortest_length = move_history.size();
@@ -157,34 +156,32 @@ void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
             this->longest_solution = move_history;
         }
         return;
-    }
+    }//EOF if (start state)
 
     if(shortest && path_size == this->shortest_length - 1){
         return;
     }
 
-    for(int i = 0; i < 4; ++i){  
-
-        char move = MOVES[i];
-
-        //if the move is not valid terminate
-        if(!currentState->moves[i]){
+    for(auto parentPair : currentState->parents){
+        auto parent = parentPair.first;
+        char move = parentPair.second;
+        if(visited_states.find(parent) != visited_states.end()){
+            continue;
+        }
+        if(shortest && parent->numPrev != -1 && parent->numPrev <= path_size){
+            continue;
+        }
+        else if(!shortest && parent->numPrev > path_size){
             continue;
         }
 
-        GameState* neighbor = currentState->neighbors[i];  //search the gameMap for the neighbor
-        //if the neighbor has been visited terminate
-        if(visited_states.find(neighbor) != visited_states.end()){
-            continue;
-        }
-
-        move_history.push_back(move);
-        visited_states.insert(neighbor);
-        solutionDFS(neighbor, move_history, path_size+1, visited_states, shortest);	//recurrsively call on the neighbor
+        parent->numPrev = path_size;
+        move_history.push_front(move);
+        visited_states.insert(parent);
+        solutionDFS(parent, move_history, path_size+1, visited_states, shortest);	//recurrsively call on the neighbor
         move_history.pop_back();
-        visited_states.erase(neighbor);
-
-    }//EOF for loop (moves loop)
+        visited_states.erase(parent);
+    }//EOF parent loop
 }//EOF solutionDFS
 
 
@@ -210,7 +207,7 @@ void GameGraph::createConnections(GameState* currentState) {
             
         auto neighborID = generateID(configuration, currentState, move);        //identifier of the neighbor
         GameState* neighbor = gameMap.find(neighborID)->second;  //search the gameMap for the neighbor
-        neighbor->parents.push_back(currentState);
+        neighbor->parents.push_back({currentState, move});
         
         //if the neighbor has not been visited yet...
         if(!neighbor->visited){
@@ -244,16 +241,22 @@ void GameGraph::findTargetStates() {
 }//EOF findTargetStates
 
 
-void GameGraph::build() {
+bool GameGraph::build() {
+    bool invalidStart = true;
 	populateMap();
 	for(auto pair : gameMap){
 		GameState* curr = pair.second;
 		if(curr->visited || curr->target || !insideOfRange(curr, coords)){
             continue;
         }
+        invalidStart = false;
         createConnections(curr);
 	}//EOF for
+    if(invalidStart){
+        return false;
+    }
     findTargetStates();
+    return true;
 }//EOF build
 
 

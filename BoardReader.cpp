@@ -63,7 +63,7 @@ list<pair<vector<vector<int>>, vector<int>>> readBoard(string filename) {
         if(line.empty()){
             continue;
         }
-        if(line[0] == '(') {
+        if(line[0] == '(' || line[0] == ';') {
             matrixComplete = true;
         }
 
@@ -130,8 +130,8 @@ list<pair<vector<vector<int>>, vector<int>>> readBoard(string filename) {
             matrixComplete = false;
             c = ' ';
             index = 0;
-        }
-    }
+        }//EOF if (';')
+    }//EOF while
 
     return boards;
 }//EOF readBoard

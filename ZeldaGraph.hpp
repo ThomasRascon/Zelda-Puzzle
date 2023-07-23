@@ -25,12 +25,13 @@ struct GameState {
   pair<int,int> p1;
   pair<int,int> p2;
   pair<int,int> wolf;
+  int numPrev;
   bool visited;
   bool target;
   bool onSolution;    //if you can get from this state to a target state
   bool moves[4]{};    //all possible movements from current state (order: Up, Down, Left, Right)
   GameState* neighbors[4]{};  // possible neighbors, corresponds to validMoves (nullptr if invalid)
-  list<GameState*> parents; //list of all states connecting to this state
+  list<pair<GameState*, char>> parents; //list of all states connecting to this state
   GameState(pair<int,int> p1, pair<int,int> p2, pair<int,int> wolf, bool target) {
     this->p1 = p1;
     this->p2 = p2;
@@ -38,6 +39,7 @@ struct GameState {
     this->visited = false;
     this->onSolution = false;
     this->target = target;
+    this->numPrev = -1;
   }
 };
 
@@ -72,7 +74,7 @@ class GameGraph {
      */
     ~GameGraph();
 
-    int getNumSolvableStarts();
+    int calcNumSolvableStarts();
 
     int getNumStartStates();
 
@@ -90,8 +92,7 @@ class GameGraph {
 
     void countOnTarget(GameState* currentState);
 
-    list<char> solutionFinder(pair<int,int> wolf, pair<int,int> p1,
-                                    pair<int,int> p2, bool shortest);
+    list<char> solutionFinder(bool shortest);
 
     void solutionDFS(GameState* currentState, list<char>& move_history,
         int path_size, unordered_set<GameState*> visited_states, bool shortest);
@@ -103,7 +104,7 @@ class GameGraph {
      */
     GameState* createState(pair<int,int> ID, bool target);
   
-    void build();
+    bool build();
 };
 
 #endif

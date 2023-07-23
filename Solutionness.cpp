@@ -11,14 +11,16 @@ using namespace std;
 double solutionness(vector<vector<int>> board, vector<int> coords){
 
     unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
-    graph->build();
+    if(!graph->build()){
+        return -1.0;
+    }
     double solutionRatio = 0;
 
     for(const auto& target : graph->targetStates){
         graph->countOnTarget(target);
     }
     
-    solutionRatio = (double)graph->getNumSolvableStarts() / graph->getNumStartStates();
+    solutionRatio = (double)graph->calcNumSolvableStarts() / graph->getNumStartStates();
 
     if(graph->getNumStartStates()==0){
         solutionRatio = 0;

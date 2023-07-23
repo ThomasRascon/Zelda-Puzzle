@@ -82,6 +82,9 @@ int main(int argc, char* argv[]){
             cout << endl;
 
             tempDensity = FUNC(board, coords);
+            if(tempDensity < 0){
+                tempDensity = 0;
+            }
             o2 << density << " " << tempDensity << endl;
             average += tempDensity;
 

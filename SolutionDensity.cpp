@@ -9,7 +9,9 @@ using namespace std;
 double solutionDensity(vector<vector<int>> board, vector<int> coords){
 
     unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
-    graph->build();
+    if(!graph->build()){
+        return -1.0;
+    }
     int totalFinalStates = 0;
     int numVisited = 0;
 
