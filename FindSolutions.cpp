@@ -4,8 +4,8 @@
 
 using namespace std;
 
-#define PRINT_STATE cout << wolf.first+1 << "," << wolf.second+1 << "; " << p1.first+1 << ","\
-                    << p1.second+1 << "; " << p2.first+1 << "," << p2.second+1
+#define PRINT_STATE cout << wolf.first+1 << "," << wolf.second+1 << "; " << p1.first+1\
+                    << "," << p1.second+1 << "; " << p2.first+1 << "," << p2.second+1
 
 int main() {
     auto boards = readBoard("BoardConfigs/board1.txt");

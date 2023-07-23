@@ -118,7 +118,7 @@ list<char> GameGraph::solutionFinder(bool shortest) {
     unordered_set<GameState*> visited_states;
     for(auto target : this->targetStates){
         visited_states.insert(target);
-        solutionDFS(target, move_history, 1, visited_states, shortest);
+        solutionDFS(target, move_history, 0, visited_states, shortest);
         visited_states.erase(target);
     }
     if(shortest){
@@ -145,8 +145,20 @@ void GameGraph::countOnTarget(GameState* currentState) {
 
 
 void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
-          int path_size, unordered_set<GameState*> visited_states, bool shortest)
+        int path_size, unordered_set<GameState*> visited_states, bool shortest)
 {
+    bool thing = false;
+    auto iter = move_history.begin();
+    if(*iter == 'R'){
+        thing = true;
+    }
+    iter++;
+    if(*iter == 'U'){
+        thing = thing && true;
+    }
+    if(move_history.size() == 2 && thing){
+        int i = 0;
+    }
     if(insideOfRange(currentState, this->coords)){
         if(shortest && move_history.size() < this->shortest_length){
             this->shortest_solution = move_history;
@@ -178,8 +190,8 @@ void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
         parent->numPrev = path_size;
         move_history.push_front(move);
         visited_states.insert(parent);
-        solutionDFS(parent, move_history, path_size+1, visited_states, shortest);	//recurrsively call on the neighbor
-        move_history.pop_back();
+        solutionDFS(parent, move_history, path_size+1, visited_states, shortest);
+        move_history.pop_front();
         visited_states.erase(parent);
     }//EOF parent loop
 }//EOF solutionDFS
@@ -205,7 +217,7 @@ void GameGraph::createConnections(GameState* currentState) {
             continue;
         }
             
-        auto neighborID = generateID(configuration, currentState, move);        //identifier of the neighbor
+        auto neighborID = generateID(configuration, currentState, move);    //identifier of the neighbor
         GameState* neighbor = gameMap.find(neighborID)->second;  //search the gameMap for the neighbor
         neighbor->parents.push_back({currentState, move});
         
@@ -215,7 +227,7 @@ void GameGraph::createConnections(GameState* currentState) {
         }
         
         currentState->moves[i] = true;            //Since the move is valid
-        currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor (created above)
+        currentState->neighbors[i] = neighbor;    //ith neighbor of currentState is neighbor
 
     }//EOF for loop (moves loop)
 }//EOF createConnections method
