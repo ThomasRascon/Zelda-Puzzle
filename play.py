@@ -24,7 +24,7 @@ class PuzzleGame:
             for j in range(len(self.board[0])):
                 if self.board[i][j] == 2:
                     targets.append((i, j))
-        return targets
+        return tuple(targets)
 
     def draw_board(self):
         self.canvas.delete(tk.ALL)
@@ -66,7 +66,7 @@ class PuzzleGame:
 
                 self.wolf_pos = new_pos
                 self.draw_board()
-                if (self.piece1_pos, self.piece2_pos) == self.target_positions:
+                if (self.piece1_pos, self.piece2_pos) == self.target_positions or (self.piece2_pos, self.piece1_pos) == self.target_positions:
                     self.canvas.create_text(200, 200, text="Congratulations! You won!", font=('Arial', 24, 'bold'))
 
     def wolf_and_piece2_will_overlap(self, new_pos):
