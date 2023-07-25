@@ -17,6 +17,7 @@ GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords)
     this->length = configuration.size();
     this->width = configuration[0].size();
     this->numSolvableStarts = 0;
+    this->numTargetsInRange = 0;
     this->shortest_length = numeric_limits<int>::max();
     this->numStartStates = 0;
 
@@ -27,8 +28,6 @@ GameGraph::GameGraph(vector<vector<int>> configuration, vector<int> coords)
 
 
 GameState* GameGraph::createState(pair<int,int> ID, bool target) {
-	//ex ID={2312 78900137} -> ID.first=2312, newWolf={23,12}
-	//ID.second = 78900137, newP1={78,90}, newP2={01,37}
     pair<int,int> newWolf = {ID.first / 100, ID.first % 100};	//{first two digits of wolf, last two digits of wolf} 
     pair<int,int> newP1 = {ID.second/1000000, (ID.second/10000)%100};  //{first two digits of ID.second, 3rd and 4th digit}
     pair<int,int> newP2 = {(ID.second/100)%100, ID.second%100};  //{5th and 6th digit, last two digits}
@@ -38,10 +37,17 @@ GameState* GameGraph::createState(pair<int,int> ID, bool target) {
 }//EOF createState method
 
 
-void GameGraph::populateMap() {
+list<GameState*> GameGraph::populateMap() {
+    list<GameState*> statesInRange;
 	//iterate through the possible positions of the wolf
-	for(int i = 0; i < this->length*this->width; ++i){
+	for(int i = width*coords[2]+coords[0]; i <= width*coords[3]+coords[1]; ++i){
+        bool first = true;
+
 		int wolf_x = i % width;
+        if(wolf_x > coords[1]){
+            i += width-(coords[1]+1)+coords[0];
+            wolf_x = i % width;
+        }
 		int wolf_y = i / width;
 		
 		//if this is not a valid space...
@@ -52,14 +58,19 @@ void GameGraph::populateMap() {
 		pair<int,int> wolf = {wolf_x, wolf_y};
 
 		//iterate through the possible positions of piece 1
-		for(int j = 0; j < this->length*this->width; ++j){
-			//if wolf and p1 collide...
+		for(int j = width*coords[6]+coords[4]; j <= width*coords[7]+coords[5]; ++j){
+
+			int p1_x = j % width;
+            if(p1_x > coords[5]){
+                    j += width-(coords[5]+1)+coords[4];
+                    p1_x = j % width;
+            }
+            int p1_y = j / width;
+
+            //if wolf and p1 collide...
 			if(j==i){
 				continue;
 			}
-			
-			int p1_x = j % width;
-			int p1_y = j / width;
 		
 			//if this is not a valid space...
 			if(configuration[p1_y][p1_x]==0){
@@ -69,15 +80,19 @@ void GameGraph::populateMap() {
 			pair<int,int> p1 = {p1_x, p1_y};
 
 			//iterate through the possible positions of piece 2
-			for(int k = 0; k < this->length*this->width; ++k){
-				
-				//if p2 collides with wolf or p1...
+			for(int k = width*coords[10]+coords[8]; k <= width*coords[11]+coords[9]; ++k){
+			
+				int p2_x = k % width;
+                if(p2_x > coords[9] || p2_x < coords[8]){
+                    k += width-(coords[9]+1)+coords[8];
+                    p2_x = k % width;
+                }
+                int p2_y = k / width;
+
+                //if p2 collides with wolf or p1...
 				if(k==i || k==j){
 					continue;
-				}
-				
-				int p2_x = k % width;
-				int p2_y = k / width;
+                }
 
 				//if this is not a valid space...
 				if(configuration[p2_y][p2_x]==0){
@@ -85,18 +100,18 @@ void GameGraph::populateMap() {
 				}
 
 				pair<int,int> p2 = {p2_x, p2_y};
-
-                bool p1Final = (p1==this->target_1 || p1==this->target_2);	//if p1 is on a final position
-                bool p2Final = (p2==this->target_1 || p2==this->target_2);	//if p2 is on a final position
-                bool isTarget = p1Final && p2Final;
                         
                 pair<int,int> ID = pairsToID(wolf, p1, p2);		//creat its ID
-				GameState* state = createState(ID, isTarget);   //create the new state
+				GameState* state = createState(ID, isTarget(ID.second, target_1, target_2));   //create the new state
 				gameMap.insert({ID, state});					//insert it into the map
+                statesInRange.push_back(state);
 
 			}//EOF p2 for loop
+            first = false;
 		}//EOF p1 for loop
 	}//EOF wolf for loop
+
+    return statesInRange;
 }//EOF populateMap
 
 
@@ -105,8 +120,14 @@ int GameGraph::getNumStartStates() {
 }//EOF getNumStartStates
 
 
+int GameGraph::getNumTargetsInRange(){
+    return this->numTargetsInRange;
+}//EOF getNumTargetsInRange
+
+
 int GameGraph::calcNumSolvableStarts() {
-    for(auto target : this->targetStates){
+    list<GameState*> visitedTargets = findVisitedTargets(); 
+    for(auto target : visitedTargets){
         this->countOnTarget(target);
     }
     return this->numSolvableStarts;
@@ -116,7 +137,8 @@ int GameGraph::calcNumSolvableStarts() {
 list<char> GameGraph::solutionFinder(bool shortest) {
     list<char> move_history;
     unordered_set<GameState*> visited_states;
-    for(auto target : this->targetStates){
+    list<GameState*> visitedTargets = findVisitedTargets(); 
+    for(auto target : visitedTargets){
         visited_states.insert(target);
         solutionDFS(target, move_history, 0, visited_states, shortest);
         visited_states.erase(target);
@@ -147,18 +169,6 @@ void GameGraph::countOnTarget(GameState* currentState) {
 void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
         int path_size, unordered_set<GameState*> visited_states, bool shortest)
 {
-    bool thing = false;
-    auto iter = move_history.begin();
-    if(*iter == 'R'){
-        thing = true;
-    }
-    iter++;
-    if(*iter == 'U'){
-        thing = thing && true;
-    }
-    if(move_history.size() == 2 && thing){
-        int i = 0;
-    }
     if(insideOfRange(currentState, this->coords)){
         if(shortest && move_history.size() < this->shortest_length){
             this->shortest_solution = move_history;
@@ -218,7 +228,17 @@ void GameGraph::createConnections(GameState* currentState) {
         }
             
         auto neighborID = generateID(configuration, currentState, move);    //identifier of the neighbor
-        GameState* neighbor = gameMap.find(neighborID)->second;  //search the gameMap for the neighbor
+        GameState* neighbor;
+        auto temp_iter = gameMap.find(neighborID);  //search the gameMap for the neighbor
+
+        if(temp_iter == gameMap.end()){
+            neighbor = createState(neighborID, isTarget(neighborID.second, target_1, target_2));
+			gameMap.insert({neighborID, neighbor});					//insert it into the map
+        }
+        else{
+            neighbor = temp_iter->second;
+        }
+
         neighbor->parents.push_back({currentState, move});
         
         //if the neighbor has not been visited yet...
@@ -233,7 +253,8 @@ void GameGraph::createConnections(GameState* currentState) {
 }//EOF createConnections method
 
 
-void GameGraph::findTargetStates() {
+list<GameState*> GameGraph::findVisitedTargets() {
+    list<GameState*> visitedTargets;
     for(int wolfIter = 0; wolfIter < width*length; ++wolfIter){
 
         int wolf_x = wolfIter % width;
@@ -246,19 +267,31 @@ void GameGraph::findTargetStates() {
         pair<int,int> wolf = {wolf_x, wolf_y};
         pair<int,int> ID_1 = pairsToID(wolf, target_1, target_2);
         pair<int,int> ID_2 = pairsToID(wolf, target_2, target_1);
-        targetStates.push_back(gameMap.find(ID_1)->second);
-        targetStates.push_back(gameMap.find(ID_2)->second);
-        
+
+        auto iter_1 = gameMap.find(ID_1);
+        auto iter_2 = gameMap.find(ID_2);
+
+        if(iter_1 != gameMap.end()){
+            visitedTargets.push_back(iter_1->second);
+        }
+        if(iter_2 != gameMap.end()){
+            visitedTargets.push_back(iter_2->second);
+        }      
     }//EOF wolf loop
-}//EOF findTargetStates
+    
+    return visitedTargets;
+}//EOF findVisitedTargets
 
 
 bool GameGraph::build() {
     bool invalidStart = true;
-	populateMap();
-	for(auto pair : gameMap){
-		GameState* curr = pair.second;
-		if(curr->visited || curr->target || !insideOfRange(curr, coords)){
+	list<GameState*> statesInRange = populateMap();
+	for(auto curr : statesInRange){
+        if(curr->target){
+            this->numTargetsInRange++;
+            continue;
+        }
+		if(curr->visited || curr->target){
             continue;
         }
         invalidStart = false;
@@ -267,7 +300,6 @@ bool GameGraph::build() {
     if(invalidStart){
         return false;
     }
-    findTargetStates();
     return true;
 }//EOF build
 

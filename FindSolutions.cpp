@@ -37,9 +37,7 @@ int main() {
             index++;
             continue;
         }
-
-        list<char> solution = graph->solutionFinder(true);
-
+        list<char> solution = graph->solutionFinder(false);
         if(solution.size() == 0){
             cout << ":" << endl << "NO SOLUTION" << endl;
         }
