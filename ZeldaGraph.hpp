@@ -53,6 +53,7 @@ class GameGraph {
     int shortest_length;
     int numStartStates;
     int numSolvableStarts;
+    int numTargetsInRange;
     pair<int,int> target_1;
     pair<int,int> target_2;
     const vector<int> coords;
@@ -61,9 +62,7 @@ class GameGraph {
     const vector<vector<int>> configuration; // board configuration
     unordered_map<pair<int,int>, GameState*, pair_hash> gameMap;
       
-  public:
-    list<GameState*> targetStates;
-  
+  public:  
     /**
      * GameGraph constructor
      */
@@ -80,7 +79,9 @@ class GameGraph {
 
     int mapSize();
   
-    void populateMap();
+    list<GameState*> populateMap();
+
+    int getNumTargetsInRange();
 
     // work from initial state
     // iterate through 4 possible directions, asking ValidMove if each direction is possible
@@ -97,7 +98,7 @@ class GameGraph {
     void solutionDFS(GameState* currentState, list<char>& move_history,
         int path_size, unordered_set<GameState*> visited_states, bool shortest);
   
-    void findTargetStates();
+    list<GameState*> findVisitedTargets();
   
     /**
      * Takes in the unique identifier of a state and creates it

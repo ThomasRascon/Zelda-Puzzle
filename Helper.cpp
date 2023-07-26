@@ -17,7 +17,14 @@ pair<int,int> pairsToID(pair<int,int> wolf, pair<int,int> p1, pair<int, int> p2)
 }//EOF pairToID
 
 
-bool insideOfRange(GameState* currentState, const vector<int>& coords) {
+bool isTarget(int p1_p2, pair<int,int> target_1, pair<int,int> target_2){
+    pair<int,int> p1 = {p1_p2/1000000, (p1_p2/10000)%100};
+    pair<int,int> p2 = {(p1_p2/100)%100, p1_p2%100};
+    return (p1==target_1 || p1==target_2) && (p2==target_1 || p2==target_2);
+}//EOF isTarget
+
+
+bool insideOfRange(const GameState* currentState, const vector<int>& coords) {
     return currentState->wolf.first >= coords[0] && currentState->wolf.first <= coords[1] &&
            currentState->wolf.second >= coords[2] && currentState->wolf.second <= coords[3] &&
            currentState->p1.first >= coords[4] && currentState->p1.first <= coords[5] &&

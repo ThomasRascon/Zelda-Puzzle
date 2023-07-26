@@ -6,27 +6,25 @@
 using namespace std;
 
 
-double solutionDensity(vector<vector<int>> board, vector<int> coords){
+double solutionDensity(const vector<vector<int>>& board, const vector<int>& coords){
 
     unique_ptr<GameGraph> graph = make_unique<GameGraph>(board, coords);
     if(!graph->build()){
         return -1.0;
     }
-    int totalFinalStates = 0;
-    int numVisited = 0;
 
-    for(const auto& target : graph->targetStates){
+    list<GameState*> visitedTargets = graph->findVisitedTargets();
+    int numVisitedTargets = 0;
+    for(const auto& target : visitedTargets){
         if(insideOfRange(target, coords)){
-            if(target->visited){
-                numVisited++;
-            }
-            totalFinalStates++;
+            numVisitedTargets++;
         }
     }
+    int totalTargetStates = graph->getNumTargetsInRange();
 
-    if(totalFinalStates==0){
+    if(totalTargetStates==0){
         return 0;
     }
 
-    return (double)numVisited/totalFinalStates;
+    return (double)numVisitedTargets / totalTargetStates;
 }//EOF solutionDensity
