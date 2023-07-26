@@ -190,11 +190,23 @@ void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
         if(visited_states.find(parent) != visited_states.end()){
             continue;
         }
-        if(shortest && parent->numPrev != -1 && parent->numPrev <= path_size){
-            continue;
-        }
-        else if(!shortest && parent->numPrev > path_size){
-            continue;
+        if(path_size > 10){
+            int delta = 0;
+            if(shortest && parent->numPrev != -1 && parent->numPrev <= path_size){
+                continue;
+            }
+            else if(path_size < 20){
+                delta = 1;
+            }
+            // else if(path_size < 30){
+            //     delta = 2;
+            // }
+            else if(path_size < 40){
+                delta = 0;
+            }
+            else if(!shortest && parent->numPrev >= path_size){
+                continue;
+            }
         }
 
         parent->numPrev = path_size;
