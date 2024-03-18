@@ -204,7 +204,7 @@ void GameGraph::solutionDFS(GameState* currentState, list<char>& move_history,
             else if(path_size < 40){
                 delta = 0;
             }
-            else if(!shortest && parent->numPrev >= path_size){
+            else if(!shortest && parent->numPrev >= path_size + delta){
                 continue;
             }
         }
